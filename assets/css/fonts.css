@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@font-face {
+  font-family: "Vinila";
+  font-weight: normal;
+    font-style: normal;
+  src: url('/fonts/VinilaCondensed/font.woff2') format('woff2'), url('/fonts/VinilaCondensed/font.woff') format('woff');
+}
+
+@font-face {
+  font-family: "Vinila";
+  font-weight: medium;
+  font-style: normal;
+  src: url('/fonts/VinilaCondensedBold/font.woff2') format('woff2'), url('/fonts/VinilaCondensedBold/font.woff') format('woff');
+}
+
+@font-face {
+  font-family: "Vinila";
+  font-weight: bold;
+  font-style: normal;
+  src: url('/fonts/VinilaCondensedBlack/font.woff2') format('woff2'), url('/fonts/VinilaCondensedBlack/font.woff') format('woff');
+}
