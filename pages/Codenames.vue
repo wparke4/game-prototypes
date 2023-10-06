@@ -7,11 +7,12 @@
         v-for="displayedWord in displayedWords"
         class="border border-gray-500 rounded-xl h-32 w-32 flex items-center justify-center hover:bg-indigo-200 cursor-pointer"
         :class="[getWordClass(displayedWord)]"
-        @click="toggleColor(displayedWord)"
+        @click="handleClick(displayedWord)"
       >
         {{ displayedWord.word }}
       </div>
     </div>
+    <button @click="updateBoard">Update Board</button>
     <pre>{{ selectedWords }}</pre>
   </div>
 </template>
@@ -60,15 +61,16 @@ const shuffleNouns = () => {
 };
 
 for (let i = 0; i < 16; i++) {
-  displayedWords.value.push({ word: '', attribute: '', toggled: false }); // Push an object with empty properties
+  displayedWords.value.push({ word: '', attribute: '', toggled: false, index: ''}); // Push an object with empty properties
 }
 
 
 //select first 16 words from nouns array and assign to words
 const chooseWords = () => {
   for (let i = 0; i < 16; i++) {
-    displayedWords.value[i].word = shuffledNouns[i];
-
+    displayedWords.value[i].word = shuffledNouns[0];
+    displayedWords.value[i].index = i;
+    shuffledNouns.shift();
   }
   console.log('displayed words array:', displayedWords.value[0].word);
 };
@@ -121,6 +123,22 @@ const getWordClass = (displayedWord) => {
   } else if (displayedWord.attribute === 'bad') {
     console.log('bad word toggled: ' + displayedWord.toggled);
     return displayedWord.toggled ? 'bg-red-500' : 'bg-white';
+  }
+};
+
+const handleClick = (displayedWord) => {
+  toggleColor(displayedWord);
+  //selectedWords.value.push(displayedWord.word);
+};
+
+//for each word in displayedWords, if toggled is true, replace the word property with the next word in shuffledNouns
+const updateBoard = () => {
+  for (let i = 0; i < displayedWords.value.length; i++) {
+    if (displayedWords.value[i].toggled === true) {
+      displayedWords.value[i].word = shuffledNouns[0];
+      displayedWords.value[i].toggled = false;
+      shuffledNouns.shift();
+    }
   }
 };
 
