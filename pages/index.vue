@@ -1,12 +1,23 @@
 <template>
-  <div class="flex-1 flex flex-col items-center justify-center w-full pt-5">
-    <h1 class="text-3xl font-bold mb-5">Hello!</h1>
-    <p>Welcome to another project 😋</p>
+  <div>
+    <Codenames />
   </div>
 </template>
 
 <script setup>
+
+import { ref } from 'vue';
+import Codenames from "@/components/Codenames.vue";
+
 const loading = ref(false);
 </script>
 
 <style lang="postcss" scoped></style>
+
+<script>
+export default {
+  components: {
+    Codenames,
+  },
+};
+</script>
