@@ -1,17 +1,22 @@
 <template>
   <div
-    class="flex flex-col w-full justify-center items-center pt-5 h-screen"
+    class="flex flex-col w-full justify-center items-center pt-5 space-y-3 h-screen"
   >
     <TeamScore />
-    <div class="words grid grid-cols-4 gap-2">
-      <div
-        v-for="displayedWord in displayedWords"
-        class="border border-gray-500 rounded-xl h-32 w-32 flex items-center justify-center hover:bg-indigo-200 cursor-pointer text-xl"
-        :class="[getWordClass(displayedWord)]"
-        @click="handleClick(displayedWord)"
-      >
-        {{ displayedWord.word }}
-      </div>
+    <div>
+        <div class="words grid grid-cols-4 gap-2">
+            <div
+              v-for="displayedWord in displayedWords"
+              class="border border-gray-500 rounded-xl h-32 w-32 flex items-center justify-center hover:bg-indigo-200 cursor-pointer text-xl"
+              :class="[getWordClass(displayedWord)]"
+              @click="handleClick(displayedWord)"
+            >
+              {{ displayedWord.word }}
+            </div>
+        </div>
+
+
+
     </div>
     <pre>{{ selectedWords }}</pre>
     <div
@@ -39,36 +44,15 @@ import IntegerInput from "@/components/IntegerInput.vue";
 import TeamScore from "@/components/TeamScore.vue";
 import seedrandom from "seedrandom";
 import { ref } from 'vue';
+import { nouns } from "@/assets/nouns.js";
+
+console.log(nouns)
 
 const displayedWords = ref([]);
 let shuffledNouns = [];
 const selectedWords = useState("selectedWords");
 // Create an array of 100 single word nouns
 
-const nouns = [
-  "time",
-  "year",
-  "wheel",
-  "football",
-  "map",
-  "music",
-  "money",
-  "method",
-  "data",
-  "food",
-  "love",
-  "person",
-  "book",
-  "language",
-  "software",
-  "problem",
-  "system",
-  "number",
-  "business",
-  "issue",
-  "side",
-  "kind",
-];
 const shuffleNouns = () => {
   shuffledNouns = [...nouns]; // Create a shallow copy to avoid modifying the original array
   for (let i = shuffledNouns.length - 1; i > 0; i--) {
