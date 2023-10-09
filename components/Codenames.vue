@@ -1,30 +1,31 @@
 <template>
   <div
-    class="flex flex-col w-full justify-center items-center pt-5 space-y-10 h-screen"
+    class="flex flex-col w-full justify-center items-center pt-5 h-screen"
   >
+    <TeamScore />
     <div class="words grid grid-cols-4 gap-2">
       <div
         v-for="displayedWord in displayedWords"
-        class="border border-gray-500 rounded-xl h-32 w-32 flex items-center justify-center hover:bg-indigo-200 cursor-pointer"
+        class="border border-gray-500 rounded-xl h-32 w-32 flex items-center justify-center hover:bg-indigo-200 cursor-pointer text-xl"
         :class="[getWordClass(displayedWord)]"
         @click="handleClick(displayedWord)"
       >
         {{ displayedWord.word }}
       </div>
     </div>
-    <button
-        @click="updateBoard"
-        class="border border-gray-500 rounded-md h-16 w-40"
-    >
-        Update Board
-    </button>
     <pre>{{ selectedWords }}</pre>
     <div
         class="flex flex-row justify-between w-full space-x-10"
     >
         <IntegerInput @submit="updateSeed" />
         <button
-            class="border border-gray-500 rounded-md h-10 w-40"
+            @click="updateBoard"
+            class="border border-gray-500 rounded-md h-20 w-40 hover:bg-indigo-200 cursor-pointer"
+        >
+            Update Board
+        </button>
+        <button
+            class="border border-gray-500 rounded-md h-20 w-40 hover:bg-indigo-200 cursor-pointer"
             @click="displayKey"
         >
             {{ displayButtonText }}
@@ -35,6 +36,7 @@
 
 <script setup>
 import IntegerInput from "@/components/IntegerInput.vue";
+import TeamScore from "@/components/TeamScore.vue";
 import seedrandom from "seedrandom";
 import { ref } from 'vue';
 
@@ -193,11 +195,11 @@ onMounted(() => {
 </script>
 <style lang="postcss" scoped>
 .bg-green-500 {
-  background-color: rgb(115, 250, 115);
+  background-color: rgb(185, 252, 185);
 }
 
 .bg-red-500 {
-  background-color: rgb(250, 115, 115);
+  background-color: rgb(252, 185, 185);
 }
 
 </style>
