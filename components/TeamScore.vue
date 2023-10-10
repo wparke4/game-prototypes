@@ -20,6 +20,7 @@
               {{ scoreA }}
           </button>
       </div>
+      <Timer />
       <div
           class="flex flex-col items-center justify-center"
         >
@@ -42,6 +43,7 @@
 </template>
 
 <script>
+import Timer from "@/components/Timer.vue";
 export default {
   data() {
     return {
@@ -82,9 +84,11 @@ export default {
       }
     },
     setActiveTeam(team) {
-      // Emit a custom event named "updateActiveTeam" with the active team data
-      this.activeTeam = team;
-      this.$emit("updateActiveTeam", team);
+      if (this.activeTeam != team) {
+        // Emit a custom event named "updateActiveTeam" with the active team data
+        this.activeTeam = team;
+        this.$emit("updateActiveTeam", team);
+      }
     },
   },
 }

@@ -4,7 +4,7 @@
     class="flex flex-col items-center justify-center"
   >
     <input
-        class="border border-gray-500 rounded-md h-10 w-40 text-center"
+        class="border border-gray-500 rounded-md h-8 w-32 text-center"
         type="number"
         v-model="inputValue"
         min="1"
@@ -13,7 +13,7 @@
     />
     <button
         @click="submit"
-        class="border border-gray-500 rounded-md h-10 w-40 hover:bg-indigo-200 cursor-pointer"
+        class="border border-gray-500 rounded-md h-8 w-32 hover:bg-indigo-200 cursor-pointer"
     >
         Submit
     </button>

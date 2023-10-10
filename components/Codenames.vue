@@ -4,6 +4,11 @@
   >
     <TeamScore @updateActiveTeam="updateActiveTeam"/>
     <div>
+      <input
+          class="h-16 w-96 border border-gray-300 rounded-md text-center text-3xl"
+      />
+    </div>
+    <div>
         <div class="words grid grid-cols-4 gap-2">
             <div
               v-for="displayedWord in displayedWords"
@@ -25,15 +30,21 @@
         <IntegerInput @submit="updateSeed" />
         <button
             @click="updateBoard"
-            class="border border-gray-500 rounded-md h-20 w-40 hover:bg-indigo-200 cursor-pointer"
+            class="border border-gray-500 rounded-md h-16 w-32 hover:bg-indigo-200 cursor-pointer"
         >
             Update Board
         </button>
         <button
-            class="border border-gray-500 rounded-md h-20 w-40 hover:bg-indigo-200 cursor-pointer"
+            class="border border-gray-500 rounded-md h-16 w-32 hover:bg-indigo-200 cursor-pointer"
             @click="displayKey"
         >
             {{ displayButtonText }}
+        </button>
+        <button
+            class="border border-gray-500 rounded-md h-16 w-32 hover:bg-indigo-200 cursor-pointer"
+            @click="deactivateWords"
+        >
+            Deactivate Words
         </button>
     </div>
   </div>
@@ -53,7 +64,26 @@ const selectedWords = useState("selectedWords");
 let activeTeam = "A";
 function updateActiveTeam(team) {
   activeTeam = team;
-  console.log("codenames says activeTeam is " + activeTeam);
+  invertKeys();
+}
+
+const deactivateWords = () => {
+  for (let i = 0; i < displayedWords.value.length; i++) {
+    if (displayedWords.value[i].toggled) {
+      displayedWords.value[i].attribute = 'inactive'
+    }
+  }
+}
+
+// Function to invert key so all words with attribute of good become bad and vice versa
+const invertKeys = () => {
+  for (let i = 0; i < displayedWords.value.length; i++) {
+    if (displayedWords.value[i].attribute === "good") {
+      displayedWords.value[i].attribute = "bad";
+    } else if (displayedWords.value[i].attribute === "bad") {
+      displayedWords.value[i].attribute = "good";
+    }
+  }
 }
 
 const shuffleNouns = () => {
@@ -116,7 +146,7 @@ const generateKeys = () => {
 
 // Function to toggle the color based on the attribute
 const toggleColor = (word) => {
-  word.toggled = !word.toggled;
+    word.toggled = !word.toggled;
 };
 
 // Function to get the class based on displayedWord
@@ -125,16 +155,18 @@ const getWordClass = (displayedWord) => {
     return displayedWord.toggled ? 'bg-green-500' : 'bg-white';
   } else if (displayedWord.attribute === 'bad') {
     return displayedWord.toggled ? 'bg-red-500' : 'bg-white';
+  } else if (displayedWord.attribute === 'inactive') {
+    return 'bg-gray-500';
   }
 };
 
 const handleClick = (displayedWord) => {
   toggleColor(displayedWord);
-  //selectedWords.value.push(displayedWord.word);
 };
 
 //for each word in displayedWords, if toggled is true, replace the word property with the next word in shuffledNouns
 const updateBoard = () => {
+  generateKeys()
   for (let i = 0; i < displayedWords.value.length; i++) {
     if (displayedWords.value[i].toggled === true) {
       displayedWords.value[i].word = shuffledNouns[0];
@@ -187,6 +219,10 @@ onMounted(() => {
 
 .bg-red-500 {
   background-color: rgb(252, 185, 185);
+}
+
+.bg-gray-500 {
+  background-color: rgb(215, 215, 215);
 }
 
 </style>
