@@ -9,7 +9,7 @@
         v-model="inputValue"
         min="1"
         max="100"
-        placeholder="Enter seed"
+        placeholder="1"
     />
     <button
         @click="submit"

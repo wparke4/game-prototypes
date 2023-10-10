@@ -109,7 +109,7 @@ const chooseWords = () => {
   }
 };
 
-let seed = 2;
+let seed = 1;
 
 
 const generateKeys = () => {

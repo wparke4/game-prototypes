@@ -96,6 +96,6 @@ export default {
 
 <style scoped>
 .yellow-background {
-  background-color: #faff5e; /* Adjust the color code to your desired shade of green */
+  background-color: #f7faa4; /* Adjust the color code to your desired shade of green */
 }
 </style>
