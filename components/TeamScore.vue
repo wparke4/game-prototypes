@@ -15,7 +15,7 @@
           </button>
           <button
               @click="updateScoreA($event)"
-              class="text-3xl"
+              class="text-5xl pt-3"
           >
               {{ scoreA }}
           </button>
@@ -34,7 +34,7 @@
           </button>
           <button
               @click="updateScoreB($event)"
-              class="text-3xl"
+              class="text-5xl pt-3"
           >
               {{ scoreB }}
           </button>

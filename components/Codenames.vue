@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col w-full justify-center items-center pt-5 space-y-3 h-screen"
+    class="flex flex-col w-full justify-center items-center pt-5 space-y-7 h-screen"
   >
     <TeamScore @updateActiveTeam="updateActiveTeam"/>
     <div>
