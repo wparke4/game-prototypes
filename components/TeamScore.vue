@@ -6,9 +6,12 @@
           class="flex flex-col items-center justify-center"
       >
           <button
-              class="border border-gray-500 rounded-md h-16 w-40 hover:bg-indigo-200 cursor-pointer"
+              id="teamA"
+              class="border border-gray-500 rounded-md h-16 w-40 hover:bg-indigo-200 cursor-pointer text-3xl"
+              :class="{ 'yellow-background': activeTeam === 'A' }"
+              @click="setActiveTeam('A')"
           >
-              {{ TeamA}}
+              {{ TeamA }}
           </button>
           <button
               @click="updateScoreA($event)"
@@ -21,7 +24,10 @@
           class="flex flex-col items-center justify-center"
         >
           <button
-            class="border border-gray-500 rounded-md h-16 w-40 hover:bg-indigo-200 cursor-pointer"
+              id="teamB"
+              class="border border-gray-500 rounded-md h-16 w-40 hover:bg-indigo-200 cursor-pointer text-3xl"
+              :class="{ 'yellow-background': activeTeam === 'B' }"
+              @click="setActiveTeam('B')"
           >
               {{ TeamB }}
           </button>
@@ -40,7 +46,10 @@ export default {
   data() {
     return {
       scoreA: 0,
-      scoreB: 0
+      scoreB: 0,
+      TeamA: "Sassys",
+      TeamB: "Classys",
+      activeTeam: "A"
     }
   },
   methods: {
@@ -72,6 +81,17 @@ export default {
         }
       }
     },
+    setActiveTeam(team) {
+      // Emit a custom event named "updateActiveTeam" with the active team data
+      this.activeTeam = team;
+      this.$emit("updateActiveTeam", team);
+    },
   },
 }
 </script>
+
+<style scoped>
+.yellow-background {
+  background-color: #faff5e; /* Adjust the color code to your desired shade of green */
+}
+</style>

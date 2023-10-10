@@ -2,7 +2,7 @@
   <div
     class="flex flex-col w-full justify-center items-center pt-5 space-y-3 h-screen"
   >
-    <TeamScore />
+    <TeamScore @updateActiveTeam="updateActiveTeam"/>
     <div>
         <div class="words grid grid-cols-4 gap-2">
             <div
@@ -46,12 +46,15 @@ import seedrandom from "seedrandom";
 import { ref } from 'vue';
 import { nouns } from "@/assets/nouns.js";
 
-console.log(nouns)
-
 const displayedWords = ref([]);
 let shuffledNouns = [];
 const selectedWords = useState("selectedWords");
-// Create an array of 100 single word nouns
+
+let activeTeam = "A";
+function updateActiveTeam(team) {
+  activeTeam = team;
+  console.log("codenames says activeTeam is " + activeTeam);
+}
 
 const shuffleNouns = () => {
   shuffledNouns = [...nouns]; // Create a shallow copy to avoid modifying the original array
