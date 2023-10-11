@@ -111,12 +111,13 @@ const chooseWords = () => {
 
 let seed = 1;
 
-
+/*
 const generateKeys = () => {
     // Create a seeded random number generator
   const rng = seedrandom(seed);
 
   let goodCount = 0;
+  let nuetralCount = 0;
   let badCount = 0;
 
   // Assign designations randomly but consistently based on the seed
@@ -143,6 +144,52 @@ const generateKeys = () => {
     }
   }
 };
+*/
+
+const generateKeys = () => {
+    // Create a seeded random number generator
+  const rng = seedrandom(seed);
+
+  let goodCount = 0;
+  let nuetralCount = 0;
+  let badCount = 0;
+
+  // Assign designations randomly but consistently based on the seed
+  for (let i = 0; i < displayedWords.value.length; i++) {
+    const randomNumber = rng();
+    const word = displayedWords.value[i];
+
+    // Check if there are already 8 "good" or 8 "bad" designations
+    if (goodCount === 10 && nuetralCount < 4) {
+      word.attribute = "nuetral";
+      nuetralCount++;
+    } else
+    if (goodCount === 10 && nuetralCount === 4) {
+      word.attribute = "bad";
+      badCount++;
+    } else
+    if (badCount === 2 && nuetralCount < 4) {
+      word.attribute = "nuetral";
+      nuetralCount++;
+    } else
+    if (badCount === 2 && nuetralCount === 4) {
+      word.attribute = 'good';
+      goodCount++;
+    } else {
+      //Assign as good, bad, or neutral based on the random number
+      if (randomNumber < 0.33) {
+        word.attribute = 'good';
+        goodCount++;
+      } else if (randomNumber < 0.66) {
+        word.attribute = 'bad';
+        badCount++;
+      } else {
+        word.attribute = 'nuetral';
+        nuetralCount++;
+      }
+    }
+  }
+};
 
 // Function to toggle the color based on the attribute
 const toggleColor = (word) => {
@@ -155,6 +202,8 @@ const getWordClass = (displayedWord) => {
     return displayedWord.toggled ? 'bg-green-500' : 'bg-white';
   } else if (displayedWord.attribute === 'bad') {
     return displayedWord.toggled ? 'bg-red-500' : 'bg-white';
+  } else if (displayedWord.attribute === 'nuetral') {
+    return displayedWord.toggled ? 'bg-gray-500' : 'bg-white';
   } else if (displayedWord.attribute === 'inactive') {
     return 'bg-gray-500';
   }

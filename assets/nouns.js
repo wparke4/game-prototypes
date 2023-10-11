@@ -371,3 +371,6 @@ export const nouns = [
   "young",
   "fail",
 ];
+
+
+//using this noun list https://github.com/hugsy/stuff/blob/main/random-word/english-nouns.txt
