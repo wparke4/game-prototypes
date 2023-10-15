@@ -24,7 +24,7 @@
 export default {
   data() {
       return {
-          grid: this.createGrid(10,20)
+          grid: this.createGrid(11,30)
       }
   },
   methods: {
@@ -96,11 +96,11 @@ display: flex;
 }
 
 .grid-cell {
-height: 40px;
-width: 40px;
+height: 50px;
+width: 50px;
 border: 1px solid #ddd;
 text-align: center;
-line-height: 40px;
+line-height: 50px;
 cursor: pointer;
 }
 

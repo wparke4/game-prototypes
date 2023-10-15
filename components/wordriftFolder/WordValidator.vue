@@ -6,7 +6,8 @@ export default {
   data() {
       return {
           validWords: new Set(),
-          pendingWordObjs: []
+          pendingWordObjs: [],
+          firstWord: true
       }
   },
   async mounted() {
@@ -21,8 +22,6 @@ export default {
   },
   methods: {
     addTile(tileLetter, rowIndex, colIndex) {
-      //console.log('wordValidator says cell populated position: ', cell)
-      console.log('wordVaidator says letter populated: ', tileLetter, ' at position: ', rowIndex, colIndex)
       // Create an object for each tile with letter, rowIndex, and colIndex
       const tileObj = {
         letter: tileLetter,
@@ -30,7 +29,21 @@ export default {
         colIndex: colIndex
       }
       this.pendingWordObjs.push(tileObj);
+    },
+    submitWord() {
+      if (this.firstWord) {
+        this.startingCellCheck()
+      }
+    },
+    startingCellCheck() {
       console.log('wordValidator says pendingWordObjs: ', this.pendingWordObjs)
+      //check to ensure that one of the tiles is placed at row index 5, col index 0
+      const firstTile = this.pendingWordObjs.find(tile => tile.rowIndex == 5 && tile.colIndex == 0);
+      if (firstTile) {
+        console.log('firstTile is occupied')
+      } else {
+        console.log('firstTile is not occupied')
+      }
     }
   }
 }
