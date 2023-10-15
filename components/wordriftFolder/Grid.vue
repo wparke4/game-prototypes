@@ -9,6 +9,8 @@
               v-for="cell in row.cells"
               :key="cell.id"
               class="grid-cell"
+              @dragstart="event => startDrag(event, cell)"
+              draggable="true"
               @dragover.prevent
               @drop="event => handleDrop(event, cell)"
               @click="cellClickHandler(cell)"
@@ -24,7 +26,8 @@
 export default {
   data() {
       return {
-          grid: this.createGrid(11,20)
+          grid: this.createGrid(11,20),
+          pendingTiles: []
       }
   },
   methods: {
@@ -71,15 +74,14 @@ export default {
               console.log('Cell is already occupied');
           }
       },
-      isValidWord(word) {
-          return this.validWords.has(word.toLowerCase());
+      startDrag(event, cell) {
+          // Logic for handling drag start
+          // e.g., sending the tile data to be received by a drop target
+          console.log("Drag started:", cell);
+          event.dataTransfer.setData("cell", JSON.stringify(cell));
       },
-      submitWord(word) {
-          if (this.isValidWord(word)) {
-              console.log('Valid word: ', word);
-          } else {
-              console.log('Invalid word: ', word);
-          }
+      wordValidated() {
+
       }
   }
 }

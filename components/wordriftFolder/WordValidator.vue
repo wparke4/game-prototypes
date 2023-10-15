@@ -46,6 +46,7 @@ export default {
         this.findWordDirection()
       } else {
         console.log('firstTile is not occupied')
+        // to do: call rejection function
       }
     },
     findWordDirection() {
@@ -76,8 +77,6 @@ export default {
         console.log('word is not horizontal or vertical')
         //to do: call a function that removes all tiles from grid and puts them back in tile rack
       }
-      //to do: check if word is valid
-      //to do: if valid, set firstWord to false
     },
     createWordString(direction) {
         // sort the pendingWordObjs by rowIndex or colIndex depending on direction
@@ -93,6 +92,10 @@ export default {
     validateWord(word) {
       if (this.validWords.has(word)) {
           console.log('Valid word: ', word);
+          if (this.firstWord) {
+            this.firstWord = false
+          }
+          this.$emit('word-validated', word);
       } else {
           console.log('Invalid word: ', word);
       }
