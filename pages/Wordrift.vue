@@ -1,13 +1,13 @@
 <template>
   <div>
-    <Bananagrams />
+    <Wordrift />
   </div>
 </template>
 
 <script setup>
 
 import { ref } from 'vue';
-import Bananagrams from "@/components/Bananagrams.vue";
+import Wordrift from "@/components/wordriftFolder/Wordrift.vue";
 
 const loading = ref(false);
 </script>
@@ -17,7 +17,7 @@ const loading = ref(false);
 <script>
 export default {
   components: {
-    Bananagrams,
+    Wordrift,
   },
 };
 </script>
