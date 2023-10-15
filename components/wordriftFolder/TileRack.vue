@@ -18,12 +18,12 @@ export default {
     return {
       tiles: [
         { id: 1, letter: 'A' },
-        { id: 2, letter: 'A' },
-        { id: 3, letter: 'A' },
-        { id: 4, letter: 'A' },
-        { id: 5, letter: 'A' },
-        { id: 6, letter: 'A' },
-        { id: 7, letter: 'A' }
+        { id: 2, letter: 'Y' },
+        { id: 3, letter: 'P' },
+        { id: 4, letter: 'G' },
+        { id: 5, letter: 'I' },
+        { id: 6, letter: 'S' },
+        { id: 7, letter: 'F' }
         // Add initial tiles here or fetch them from an API/parent component
       ],
       availableLetters: ['A', 'A', 'B', 'C', 'D', 'E', 'E', 'E', 'F', 'G', 'H', 'I', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'U', 'V', 'W', 'X', 'Y', 'Z'],

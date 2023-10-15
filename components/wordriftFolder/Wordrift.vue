@@ -9,6 +9,8 @@
                 v-for="cell in row.cells"
                 :key="cell.id"
                 class="grid-cell"
+                @dragover.prevent
+                @drop="event => handleDrop(event, cell)"
                 @click="cellClickHandler(cell)"
             >
                 {{  cell.letter }}
@@ -52,6 +54,28 @@ export default {
             The action would be to pop that letter back into player's hand
             if the word has not been submitted and validated yet.
             */
+        },
+        handleDrop(event, cell) {
+            // retrieve tile data from the event
+            const tileData = JSON.parse(event.dataTransfer.getData("tile"));
+
+            // logic to place tile on the grid
+            this.placeTileOnGrid(tileData, cell);
+        },
+        placeTileOnGrid(tileData, cell) {
+            // find the row and col index of the cell
+            const [rowIndex, colIndex] = cell.id.split("-");
+
+
+
+            if (!this.grid[rowIndex].cells[colIndex].letter) {
+                this.grid[rowIndex].cells[colIndex].letter = tileData.letter;
+
+                // Communicate back to tile rack to remove this tile from there
+                this.$emit('tile-placed', tileData.id);
+            } else {
+                console.log('Cell is already occupied');
+            }
         }
     }
 }
