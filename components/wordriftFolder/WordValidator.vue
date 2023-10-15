@@ -26,13 +26,15 @@ export default {
       const tileObj = {
         letter: tileLetter,
         rowIndex: rowIndex,
-        colIndex: colIndex
+        colIndex: colIndex,
       }
       this.pendingWordObjs.push(tileObj);
     },
     submitWord() {
       if (this.firstWord) {
         this.startingCellCheck()
+      } else {
+        this.findWordDirection()
       }
     },
     startingCellCheck() {
@@ -41,8 +43,58 @@ export default {
       const firstTile = this.pendingWordObjs.find(tile => tile.rowIndex == 5 && tile.colIndex == 0);
       if (firstTile) {
         console.log('firstTile is occupied')
+        this.findWordDirection()
       } else {
         console.log('firstTile is not occupied')
+      }
+    },
+    findWordDirection() {
+      //to do: check if word is horizontal or vertical
+      let matchingRowIndeces = 0
+      let matchingColIndeces = 0
+
+      const firstTile = this.pendingWordObjs[0]
+      const rowIndex = firstTile.rowIndex
+      const colIndex = firstTile.colIndex
+
+      for (let i = 0; i < this.pendingWordObjs.length; i++) {
+        if (this.pendingWordObjs[i].rowIndex == rowIndex) {
+          matchingRowIndeces++
+        }
+        if (this.pendingWordObjs[i].colIndex == colIndex) {
+          matchingColIndeces++
+        }
+      }
+
+      if (matchingRowIndeces == this.pendingWordObjs.length) {
+        const wordDirection = 'horizontal'
+        this.createWordString(wordDirection)
+      } else if (matchingColIndeces == this.pendingWordObjs.length) {
+        const wordDirection = 'vertical'
+        this.createWordString(wordDirection)
+      } else {
+        console.log('word is not horizontal or vertical')
+        //to do: call a function that removes all tiles from grid and puts them back in tile rack
+      }
+      //to do: check if word is valid
+      //to do: if valid, set firstWord to false
+    },
+    createWordString(direction) {
+        // sort the pendingWordObjs by rowIndex or colIndex depending on direction
+        if (direction == 'horizontal') {
+          this.pendingWordObjs.sort((a, b) => a.colIndex - b.colIndex)
+        } else if (direction == 'vertical') {
+          this.pendingWordObjs.sort((a, b) => a.rowIndex - b.rowIndex)
+        }
+
+        const pendingString = this.pendingWordObjs.map(tile => tile.letter).join('').toLocaleLowerCase();
+        this.validateWord(pendingString)
+    },
+    validateWord(word) {
+      if (this.validWords.has(word)) {
+          console.log('Valid word: ', word);
+      } else {
+          console.log('Invalid word: ', word);
       }
     }
   }

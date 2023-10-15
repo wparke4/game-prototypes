@@ -24,7 +24,7 @@
 export default {
   data() {
       return {
-          grid: this.createGrid(11,30)
+          grid: this.createGrid(11,20)
       }
   },
   methods: {
@@ -72,14 +72,14 @@ export default {
           }
       },
       isValidWord(word) {
-        return this.validWords.has(word.toLowerCase());
+          return this.validWords.has(word.toLowerCase());
       },
       submitWord(word) {
-        if (this.isValidWord(word)) {
-          console.log('Valid word: ', word);
-        } else {
-          console.log('Invalid word: ', word);
-        }
+          if (this.isValidWord(word)) {
+              console.log('Valid word: ', word);
+          } else {
+              console.log('Invalid word: ', word);
+          }
       }
   }
 }
