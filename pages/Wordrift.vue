@@ -12,8 +12,6 @@ import Wordrift from "@/components/wordriftFolder/Wordrift.vue";
 const loading = ref(false);
 </script>
 
-<style lang="postcss" scoped></style>
-
 <script>
 export default {
   components: {

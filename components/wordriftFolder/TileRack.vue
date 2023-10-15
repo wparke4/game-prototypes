@@ -36,6 +36,13 @@ export default {
       // e.g., sending the tile data to be received by a drop target
       console.log("Drag started:", tile);
       event.dataTransfer.setData("tile", JSON.stringify(tile));
+    },
+    removeTile(tileId) {
+      console.log('Removing tile with id: ', tileId)
+      const tileIndex = this.tiles.findIndex(tile => tile.id === tileId);
+      if (tileIndex > -1) {
+        this.tiles.splice(tileIndex, 1);
+      }
     }
     /*
     replenishTiles() {

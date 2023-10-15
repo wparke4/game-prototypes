@@ -1,6 +1,6 @@
 <template>
-    <Grid />
-    <TileRack />
+    <Grid @tile-placed="tilePlacedOnGrid"  />
+    <TileRack ref="tileRack" />
 </template>
 
 <script>
@@ -12,5 +12,14 @@ export default {
         TileRack,
         Grid
     },
+    methods: {
+        tilePlacedOnGrid(tileData) {
+            console.log('wordrift says tileData: ', tileData)
+            this.$refs.tileRack.removeTile(tileData);
+        }
+    }
 }
 </script>
+<style scoped>
+/* your CSS here */
+</style>
