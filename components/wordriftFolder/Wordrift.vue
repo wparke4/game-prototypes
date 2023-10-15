@@ -15,14 +15,20 @@
             </div>
         </div>
     </div>
+    <TileRack />
 </template>
 
 <script>
+import TileRack from "@/components/wordriftFolder/TileRack.vue";
+
 export default {
     data() {
         return {
             grid: this.createGrid(10,20)
         }
+    },
+    components: {
+        TileRack
     },
     methods: {
         createGrid(rows, cols) {
