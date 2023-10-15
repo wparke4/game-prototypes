@@ -66,10 +66,20 @@ export default {
               this.grid[rowIndex].cells[colIndex].letter = tileData.letter;
 
               // Communicate back to tile rack to remove this tile from there
-              this.$emit('tile-placed', tileData.id);
+              this.$emit('tile-placed', tileData);
           } else {
               console.log('Cell is already occupied');
           }
+      },
+      isValidWord(word) {
+        return this.validWords.has(word.toLowerCase());
+      },
+      submitWord(word) {
+        if (this.isValidWord(word)) {
+          console.log('Valid word: ', word);
+        } else {
+          console.log('Invalid word: ', word);
+        }
       }
   }
 }
