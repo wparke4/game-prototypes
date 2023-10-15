@@ -16,10 +16,10 @@ export default {
         WordValidator
     },
     methods: {
-        tilePlacedOnGrid(tileData) {
+        tilePlacedOnGrid(tileData, rowIndex, colIndex) {
             console.log('wordrift says tileData: ', tileData)
             this.$refs.tileRack.removeTile(tileData.id);
-            this.$refs.wordValidator.addTile(tileData.letter);
+            this.$refs.wordValidator.addTile(tileData.letter, rowIndex, colIndex);
         }
     }
 }

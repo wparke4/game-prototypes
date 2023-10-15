@@ -66,7 +66,7 @@ export default {
               this.grid[rowIndex].cells[colIndex].letter = tileData.letter;
 
               // Communicate back to tile rack to remove this tile from there
-              this.$emit('tile-placed', tileData);
+              this.$emit('tile-placed', tileData, rowIndex, colIndex);
           } else {
               console.log('Cell is already occupied');
           }

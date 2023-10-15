@@ -19,9 +19,9 @@ export default {
       }
   },
   methods: {
-    addTile(tileLetter) {
+    addTile(tileLetter, rowIndex, colIndex) {
       //console.log('wordValidator says cell populated position: ', cell)
-      console.log('wordVaidator says letter populated: ', tileLetter)
+      console.log('wordVaidator says letter populated: ', tileLetter, ' at position: ', rowIndex, colIndex)
     }
   }
 }
