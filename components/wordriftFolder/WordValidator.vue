@@ -7,7 +7,7 @@ export default {
       return {
           validWords: new Set(),
           pendingWordObjs: [],
-          validatedWords: [],
+          validatedObjs: [],
           firstWord: true
       }
   },
@@ -35,16 +35,11 @@ export default {
       // find the obj in pendingWordObjs that matches the rowIndex, and colIndex
       const tileObj = this.pendingWordObjs.find(tile => tile.rowIndex == rowIndex && tile.colIndex == colIndex);
 
-      console.log('wordValidator says pendingWordObjs before splice: ', this.pendingWordObjs)
-      console.log('wordValidator says row, col: ', rowIndex, colIndex)
-
       //remove tileObj from pendingWordObjs
       const index = this.pendingWordObjs.indexOf(tileObj);
-      console.log('wordValidator says index: ', index)
       if (index > -1) {
         this.pendingWordObjs.splice(index, 1);
       }
-      console.log('wordValidator says pendingWordObjs after splice: ', this.pendingWordObjs)
     },
     submitWord() {
       if (this.firstWord) {
@@ -112,6 +107,8 @@ export default {
             this.firstWord = false
           }
           this.$emit('word-validated', word);
+          this.validatedObjs = this.pendingWordObjs
+          this.pendingWordObjs = []
       } else {
           console.log('Invalid word: ', word);
       }

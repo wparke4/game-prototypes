@@ -27,7 +27,8 @@ export default {
   data() {
       return {
           grid: this.createGrid(11,20),
-          pendingTiles: []
+          pendingTiles: [],
+          validatedTiles: []
       }
   },
   methods: {
@@ -40,6 +41,8 @@ export default {
               with an id of row index and col index as well as letter parameter */
               cells: Array.from({ length: cols }, (_, colIndex) => ({
                   id: `${rowIndex}-${colIndex}`,
+                  row: rowIndex,
+                  col: colIndex,
                   letter: null,
                   typeCell: true
               }))
@@ -60,7 +63,9 @@ export default {
       },
       placeTileOnGrid(tileData, cell) {
           // find the row and col index of the cell
-          const [rowIndex, colIndex] = cell.id.split("-");
+          //const [rowIndex, colIndex] = cell.id.split("-");
+          const rowIndex = cell.row
+          const colIndex = cell.col
 
           // check if the cell is empty then places the tile
           if (!this.grid[rowIndex].cells[colIndex].letter) {
@@ -71,14 +76,27 @@ export default {
               console.log('Cell is already occupied');
           }
 
+          this.pendingTiles.push(cell);
+
           if (tileData.typeCell) {
               this.clearOldCell(tileData)
           }
       },
       clearOldCell(tileData) {
-          const [rowIndex, colIndex] = tileData.id.split("-");
+          //const [rowIndex, colIndex] = tileData.id.split("-");
+          const rowIndex = tileData.row
+          const colIndex = tileData.col
+
           this.grid[rowIndex].cells[colIndex].letter = null;
           this.$emit('remove-tile', rowIndex, colIndex)
+
+          const tileObj = this.pendingTiles.find(tile => tile.row == rowIndex && tile.col == colIndex);
+
+          //remove old cell from pendingWordObjs
+          const index = this.pendingTiles.indexOf(tileObj);
+          if (index > -1) {
+            this.pendingTiles.splice(index, 1);
+          }
       },
       startDrag(event, cell) {
           // Logic for handling drag start
@@ -87,7 +105,7 @@ export default {
           event.dataTransfer.setData("tile", JSON.stringify(cell));
       },
       wordValidated() {
-
+          console.log('pending tiles: ', this.pendingTiles)
       }
   }
 }
