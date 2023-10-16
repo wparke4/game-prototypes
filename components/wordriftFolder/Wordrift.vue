@@ -5,6 +5,7 @@
         <Grid
             ref="grid"
             @tile-placed="tilePlacedOnGrid"
+            @remove-tile="removeTileFromGrid"
         />
         <TileRack
             ref="tileRack"
@@ -36,8 +37,11 @@ export default {
     methods: {
         tilePlacedOnGrid(tileData, rowIndex, colIndex) {
             console.log('wordrift says tileData: ', tileData)
-            this.$refs.tileRack.removeTile(tileData.id);
+            this.$refs.tileRack.removeTile(tileData.rackIndex);
             this.$refs.wordValidator.addTile(tileData.letter, rowIndex, colIndex);
+        },
+        removeTileFromGrid(rowIndex, colIndex) {
+            this.$refs.wordValidator.removeTile(rowIndex, colIndex);
         },
         wordValidated() {
             console.log('wordrift says wordValidated')

@@ -17,30 +17,31 @@ export default {
   data() {
     return {
       tiles: [
-        { id: 1, letter: 'A' },
-        { id: 2, letter: 'Y' },
-        { id: 3, letter: 'P' },
-        { id: 4, letter: 'G' },
-        { id: 5, letter: 'I' },
-        { id: 6, letter: 'S' },
-        { id: 7, letter: 'F' }
+        { rackIndex: 0, letter: 'A' },
+        { rackIndex: 2, letter: 'Y' },
+        { rackIndex: 3, letter: 'P' },
+        { rackIndex: 4, letter: 'G' },
+        { rackIndex: 5, letter: 'I' },
+        { rackIndex: 6, letter: 'S' },
+        { rackIndex: 7, letter: 'F' }
         // Add initial tiles here or fetch them from an API/parent component
       ],
       availableLetters: ['A', 'A', 'B', 'C', 'D', 'E', 'E', 'E', 'F', 'G', 'H', 'I', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'U', 'V', 'W', 'X', 'Y', 'Z'],
-      nextAvailableID: 8
+      nextAvailableID: 8,
+      pendingTiles: [],
+      validatedTiles: []
     };
   },
   methods: {
     startDrag(event, tile) {
       // Logic for handling drag start
       // e.g., sending the tile data to be received by a drop target
-      console.log("Drag started:", tile);
       event.dataTransfer.setData("tile", JSON.stringify(tile));
     },
     removeTile(tileId) {
-      console.log('Removing tile with id: ', tileId)
-      const tileIndex = this.tiles.findIndex(tile => tile.id === tileId);
+      const tileIndex = this.tiles.findIndex(tile => tile.rackIndex === tileId);
       if (tileIndex > -1) {
+        this.pendingTiles.push(this.tiles[tileIndex]);
         this.tiles.splice(tileIndex, 1);
       }
     }

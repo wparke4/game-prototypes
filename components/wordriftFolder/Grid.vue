@@ -40,7 +40,8 @@ export default {
               with an id of row index and col index as well as letter parameter */
               cells: Array.from({ length: cols }, (_, colIndex) => ({
                   id: `${rowIndex}-${colIndex}`,
-                  letter: null
+                  letter: null,
+                  typeCell: true
               }))
           }))
       },
@@ -54,10 +55,7 @@ export default {
           */
       },
       handleDrop(event, cell) {
-          // retrieve tile data from the event
           const tileData = JSON.parse(event.dataTransfer.getData("tile"));
-
-          // logic to place tile on the grid
           this.placeTileOnGrid(tileData, cell);
       },
       placeTileOnGrid(tileData, cell) {
@@ -67,18 +65,26 @@ export default {
           // check if the cell is empty then places the tile
           if (!this.grid[rowIndex].cells[colIndex].letter) {
               this.grid[rowIndex].cells[colIndex].letter = tileData.letter;
-
               // Communicate back to tile rack to remove this tile from there
               this.$emit('tile-placed', tileData, rowIndex, colIndex);
           } else {
               console.log('Cell is already occupied');
           }
+
+          if (tileData.typeCell) {
+              this.clearOldCell(tileData)
+          }
+      },
+      clearOldCell(tileData) {
+          const [rowIndex, colIndex] = tileData.id.split("-");
+          this.grid[rowIndex].cells[colIndex].letter = null;
+          this.$emit('remove-tile', rowIndex, colIndex)
       },
       startDrag(event, cell) {
           // Logic for handling drag start
           // e.g., sending the tile data to be received by a drop target
           console.log("Drag started:", cell);
-          event.dataTransfer.setData("cell", JSON.stringify(cell));
+          event.dataTransfer.setData("tile", JSON.stringify(cell));
       },
       wordValidated() {
 
