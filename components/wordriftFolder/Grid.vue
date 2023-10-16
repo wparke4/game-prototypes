@@ -10,7 +10,7 @@
               :key="cell.id"
               class="grid-cell"
               @dragstart="event => startDrag(event, cell)"
-              draggable="true"
+              :draggable="isDraggable(cell.id)"
               @dragover.prevent
               @drop="event => handleDrop(event, cell)"
               @click="cellClickHandler(cell)"
@@ -105,7 +105,20 @@ export default {
           event.dataTransfer.setData("tile", JSON.stringify(cell));
       },
       wordValidated() {
-          console.log('pending tiles: ', this.pendingTiles)
+          this.validatedTiles = this.pendingTiles
+          this.pendingTiles = []
+
+          // all tiles in validatedTiles are no longer draggable
+
+      },
+      isDraggable(id) {
+          // if the cell is in validatedTiles, it is not draggable
+          const tileObj = this.validatedTiles.find(tile => tile.id == id);
+          if (tileObj) {
+              return false
+          } else {
+              return true
+          }
       }
   }
 }
