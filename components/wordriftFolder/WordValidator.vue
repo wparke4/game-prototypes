@@ -107,7 +107,7 @@ export default {
             this.firstWord = false
           }
           this.$emit('word-validated', word);
-          this.validatedObjs = this.pendingWordObjs
+          this.pendingWordObjs.forEach(tile => this.validatedObjs.push(tile))
           this.pendingWordObjs = []
       } else {
           console.log('Invalid word: ', word);

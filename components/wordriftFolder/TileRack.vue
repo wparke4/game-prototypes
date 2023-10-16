@@ -44,17 +44,18 @@ export default {
         this.pendingTiles.push(this.tiles[tileIndex]);
         this.tiles.splice(tileIndex, 1);
       }
-    }
-    /*
+    },
     replenishTiles() {
+      this.pendingTiles.forEach(tile => this.validatedTiles.push(tile))
+      this.pendingTiles = []
+
       while (this.tiles.length < 7 && this.availableLetters.length > 0) {
         const randomIndex = Math.floor(Math.random() * this.availableLetters.length);
         const letter = this.availableLetters.splice(randomIndex, 1)[0];
-        this.tiles.push({ id: this.nextAvailableID, letter });
+        this.tiles.push({ rackIndex: this.nextAvailableID, letter });
         this.nextAvailableID++;
     }
     }
-    */
   }
 }
 </script>

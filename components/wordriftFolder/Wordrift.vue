@@ -44,9 +44,8 @@ export default {
             this.$refs.wordValidator.removeTile(rowIndex, colIndex);
         },
         wordValidated() {
-            console.log('wordrift says wordValidated')
             this.$refs.grid.wordValidated();
-            //this.$refs.tileRack.resetTileRack();
+            this.$refs.tileRack.replenishTiles();
             //this.$refs.wordValidator.resetWordValidator();
         }
     }

@@ -9,6 +9,7 @@
               v-for="cell in row.cells"
               :key="cell.id"
               class="grid-cell"
+              :class="{ 'background-color-green-500': !isDraggable(cell.id) }"
               @dragstart="event => startDrag(event, cell)"
               :draggable="isDraggable(cell.id)"
               @dragover.prevent
@@ -105,8 +106,8 @@ export default {
           event.dataTransfer.setData("tile", JSON.stringify(cell));
       },
       wordValidated() {
-          this.validatedTiles = this.pendingTiles
-          this.pendingTiles = []
+        this.pendingTiles.forEach(tile => this.validatedTiles.push(tile))
+        this.pendingTiles = []
 
           // all tiles in validatedTiles are no longer draggable
 
@@ -145,6 +146,10 @@ cursor: pointer;
 
 .grid-cell:hover {
 background-color: #eee;
+}
+
+.background-color-green-500 {
+background-color: #83fad3;
 }
 </style>
 
