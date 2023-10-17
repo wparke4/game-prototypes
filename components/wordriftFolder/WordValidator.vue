@@ -49,10 +49,9 @@ export default {
       }
     },
     startingCellCheck() {
-      console.log('wordValidator says pendingWordObjs: ', this.pendingWordObjs)
       //check to ensure that one of the tiles is placed at row index 5, col index 0
-      const firstTile = this.pendingWordObjs.find(tile => tile.rowIndex == 5 && tile.colIndex == 0);
-      if (firstTile) {
+      const firstColTile = this.pendingWordObjs.find(tile => tile.colIndex == 0);
+      if (firstColTile) {
         console.log('firstTile is occupied')
         this.findWordDirection()
       } else {
