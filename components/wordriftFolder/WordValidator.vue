@@ -124,10 +124,8 @@ export default {
             }
         }
 
-        /*
-        const pendingString = this.pendingWordObjs.map(tile => tile.letter).join('').toLocaleLowerCase();
+        const pendingString = this.wordsToValidate[this.currIndex].map(tile => tile.letter).join('').toLocaleLowerCase();
         this.validateWord(pendingString)
-        */
     },
     checkVerticalGaps(direction) {
         const wordArray = this.wordsToValidate[this.currIndex]
@@ -141,13 +139,16 @@ export default {
                 console.log('there is no gap in the word')
             }
         }
+
+        const pendingString = this.wordsToValidate[this.currIndex].map(tile => tile.letter).join('').toLocaleLowerCase();
+        this.validateWord(pendingString)
     },
     fillGap(row, col, index, direction) {
         const wordArray = this.wordsToValidate[this.currIndex]
 
         if ( direction == 'horizontal') {
 
-            let gapFiller = this.validatedObjs.find(tile => tile.colIndex == col + 1)
+            let gapFiller = this.validatedObjs.find(tile => tile.colIndex == col + 1 && tile.rowIndex == row)
             console.log('gapFiller: ', gapFiller)
 
             // add gapFiller to this.wordsToValidate[this.currIndex] at index + 1
@@ -156,7 +157,7 @@ export default {
 
         } else if (direction == 'vertical') {
 
-            let gapFiller = this.validatedObjs.find(tile => tile.rowIndex == row + 1)
+            let gapFiller = this.validatedObjs.find(tile => tile.rowIndex == row + 1 && tile.colIndex == col)
             console.log('gapFiller: ', gapFiller)
 
             // add gapFiller to this.wordsToValidate[this.currIndex] at index + 1
@@ -176,6 +177,7 @@ export default {
           this.$emit('word-validated', word);
           this.pendingWordObjs.forEach(tile => this.validatedObjs.push(tile))
           this.pendingWordObjs = []
+          this.wordsToValidate = []
           console.log('validatedWords: ', this.validatedObjs)
       } else {
           console.log('Invalid word: ', word);
