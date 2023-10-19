@@ -9,7 +9,8 @@ export default {
           pendingWordObjs: [],
           wordsToValidate: [],
           validatedObjs: [],
-          firstWord: true
+          firstWord: true,
+          currIndex: 0
       }
   },
   async mounted() {
@@ -71,24 +72,24 @@ export default {
       let matchingRowIndeces = 0
       let matchingColIndeces = 0
 
-      const firstTile = this.wordsToValidate[0][0]
+      const firstTile = this.wordsToValidate[this.currIndex][0]
       const rowIndex = firstTile.rowIndex
       const colIndex = firstTile.colIndex
 
-      for ( let i = 0; i < this.wordsToValidate[0].length; i++) {
-        if (this.wordsToValidate[0][i].rowIndex == rowIndex) {
+      for ( let i = 0; i < this.wordsToValidate[this.currIndex].length; i++) {
+        if (this.wordsToValidate[this.currIndex][i].rowIndex == rowIndex) {
           matchingRowIndeces++
         }
-        if (this.wordsToValidate[0][i].colIndex == colIndex) {
+        if (this.wordsToValidate[this.currIndex][i].colIndex == colIndex) {
           matchingColIndeces++
         }
       }
 
 
-      if (matchingRowIndeces == this.wordsToValidate[0].length) {
+      if (matchingRowIndeces == this.wordsToValidate[this.currIndex].length) {
           const wordDirection = 'horizontal'
           this.sortLetters(wordDirection)
-      } else if (matchingColIndeces == this.wordsToValidate[0].length) {
+      } else if (matchingColIndeces == this.wordsToValidate[this.currIndex].length) {
           const wordDirection = 'vertical'
           this.sortLetters(wordDirection)
       } else {
@@ -99,24 +100,25 @@ export default {
     sortLetters(direction) {
         // sort the pendingWordObjs by rowIndex or colIndex depending on direction
         if (direction == 'horizontal') {
-          this.wordsToValidate[0].sort((a, b) => a.colIndex - b.colIndex)
-          this.checkHorizontalGaps()
+          this.wordsToValidate[this.currIndex].sort((a, b) => a.colIndex - b.colIndex)
+          this.checkHorizontalGaps(direction)
 
         } else if (direction == 'vertical') {
-          this.wordsToValidate[0].sort((a, b) => a.rowIndex - b.rowIndex)
-          this.checkVerticalGaps()
+          this.wordsToValidate[this.currIndex].sort((a, b) => a.rowIndex - b.rowIndex)
+          this.checkVerticalGaps(direction)
         }
 
         //const pendingString = this.pendingWordObjs.map(tile => tile.letter).join('').toLocaleLowerCase();
         //this.validateWord(pendingString)
     },
-    checkHorizontalGaps() {
-        const wordArray = this.wordsToValidate[0]
+    checkHorizontalGaps(direction) {
+        const wordArray = this.wordsToValidate[this.currIndex]
 
         for (let i = 0; i < wordArray.length - 1; i++) {
             if (wordArray[i].colIndex + 1 != wordArray[i + 1].colIndex) {
                 console.log('there is a gap in the word')
-                //to do: call a function that removes all tiles from grid and puts them back in tile rack
+
+                this.fillGap(wordArray[i].rowIndex, wordArray[i].colIndex, i, direction)
             } else {
                 console.log('there is no gap in the word')
             }
@@ -127,16 +129,28 @@ export default {
         this.validateWord(pendingString)
         */
     },
-    checkVerticalGaps() {
-        const wordArray = this.wordsToValidate[0]
+    checkVerticalGaps(direction) {
+        const wordArray = this.wordsToValidate[this.currIndex]
 
         for (let i = 0; i < wordArray.length - 1; i++) {
             if (wordArray[i].rowIndex + 1 != wordArray[i + 1].rowIndex) {
                 console.log('there is a gap in the word')
-                //to do: call a function that removes all tiles from grid and puts them back in tile rack
+
+                this.fillGap(wordArray[i].rowIndex, wordArray[i].colIndex, i, direction)
             } else {
                 console.log('there is no gap in the word')
             }
+        }
+    },
+    fillGap(row, col, index, direction) {
+        const wordArray = this.wordsToValidate[this.currIndex]
+
+        if ( direction == 'horizontal') {
+
+        } else if (direction == 'vertical') {
+
+        } else {
+            console.log('direction is not horizontal or vertical')
         }
     },
     validateWord(word) {
