@@ -147,7 +147,21 @@ export default {
 
         if ( direction == 'horizontal') {
 
+            let gapFiller = this.validatedObjs.find(tile => tile.colIndex == col + 1)
+            console.log('gapFiller: ', gapFiller)
+
+            // add gapFiller to this.wordsToValidate[this.currIndex] at index + 1
+            this.wordsToValidate[this.currIndex].splice(index + 1, 0, gapFiller)
+            this.checkHorizontalGaps(direction)
+
         } else if (direction == 'vertical') {
+
+            let gapFiller = this.validatedObjs.find(tile => tile.rowIndex == row + 1)
+            console.log('gapFiller: ', gapFiller)
+
+            // add gapFiller to this.wordsToValidate[this.currIndex] at index + 1
+            this.wordsToValidate[this.currIndex].splice(index + 1, 0, gapFiller)
+            this.checkVerticalGaps(direction)
 
         } else {
             console.log('direction is not horizontal or vertical')
