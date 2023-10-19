@@ -7,6 +7,7 @@ export default {
       return {
           validWords: new Set(),
           pendingWordObjs: [],
+          wordsToValidate: [],
           validatedObjs: [],
           firstWord: true
       }
@@ -42,6 +43,11 @@ export default {
       }
     },
     submitWord() {
+      // push all letters to wordsToValidate
+      this.wordsToValidate.push(this.pendingWordObjs)
+
+      // to do - push all letters separately to their own index of wordsToValidate for adjacent check
+
       if (this.firstWord) {
         this.startingCellCheck()
       } else {
@@ -50,7 +56,8 @@ export default {
     },
     startingCellCheck() {
       //check to ensure that one of the tiles is placed at row index 5, col index 0
-      const firstColTile = this.pendingWordObjs.find(tile => tile.colIndex == 0);
+      const firstColTile = this.wordsToValidate[0].find(tile => tile.colIndex == 0);
+
       if (firstColTile) {
         console.log('firstTile is occupied')
         this.findWordDirection()
@@ -64,40 +71,73 @@ export default {
       let matchingRowIndeces = 0
       let matchingColIndeces = 0
 
-      const firstTile = this.pendingWordObjs[0]
+      const firstTile = this.wordsToValidate[0][0]
       const rowIndex = firstTile.rowIndex
       const colIndex = firstTile.colIndex
 
-      for (let i = 0; i < this.pendingWordObjs.length; i++) {
-        if (this.pendingWordObjs[i].rowIndex == rowIndex) {
+      for ( let i = 0; i < this.wordsToValidate[0].length; i++) {
+        if (this.wordsToValidate[0][i].rowIndex == rowIndex) {
           matchingRowIndeces++
         }
-        if (this.pendingWordObjs[i].colIndex == colIndex) {
+        if (this.wordsToValidate[0][i].colIndex == colIndex) {
           matchingColIndeces++
         }
       }
 
-      if (matchingRowIndeces == this.pendingWordObjs.length) {
-        const wordDirection = 'horizontal'
-        this.createWordString(wordDirection)
-      } else if (matchingColIndeces == this.pendingWordObjs.length) {
-        const wordDirection = 'vertical'
-        this.createWordString(wordDirection)
+
+      if (matchingRowIndeces == this.wordsToValidate[0].length) {
+          const wordDirection = 'horizontal'
+          this.sortLetters(wordDirection)
+      } else if (matchingColIndeces == this.wordsToValidate[0].length) {
+          const wordDirection = 'vertical'
+          this.sortLetters(wordDirection)
       } else {
-        console.log('word is not horizontal or vertical')
-        //to do: call a function that removes all tiles from grid and puts them back in tile rack
+          console.log('word is not horizontal or vertical')
+          //to do: call a function that removes all tiles from grid and puts them back in tile rack
       }
     },
-    createWordString(direction) {
+    sortLetters(direction) {
         // sort the pendingWordObjs by rowIndex or colIndex depending on direction
         if (direction == 'horizontal') {
-          this.pendingWordObjs.sort((a, b) => a.colIndex - b.colIndex)
+          this.wordsToValidate[0].sort((a, b) => a.colIndex - b.colIndex)
+          this.checkHorizontalGaps()
+
         } else if (direction == 'vertical') {
-          this.pendingWordObjs.sort((a, b) => a.rowIndex - b.rowIndex)
+          this.wordsToValidate[0].sort((a, b) => a.rowIndex - b.rowIndex)
+          this.checkVerticalGaps()
         }
 
+        //const pendingString = this.pendingWordObjs.map(tile => tile.letter).join('').toLocaleLowerCase();
+        //this.validateWord(pendingString)
+    },
+    checkHorizontalGaps() {
+        const wordArray = this.wordsToValidate[0]
+
+        for (let i = 0; i < wordArray.length - 1; i++) {
+            if (wordArray[i].colIndex + 1 != wordArray[i + 1].colIndex) {
+                console.log('there is a gap in the word')
+                //to do: call a function that removes all tiles from grid and puts them back in tile rack
+            } else {
+                console.log('there is no gap in the word')
+            }
+        }
+
+        /*
         const pendingString = this.pendingWordObjs.map(tile => tile.letter).join('').toLocaleLowerCase();
         this.validateWord(pendingString)
+        */
+    },
+    checkVerticalGaps() {
+        const wordArray = this.wordsToValidate[0]
+
+        for (let i = 0; i < wordArray.length - 1; i++) {
+            if (wordArray[i].rowIndex + 1 != wordArray[i + 1].rowIndex) {
+                console.log('there is a gap in the word')
+                //to do: call a function that removes all tiles from grid and puts them back in tile rack
+            } else {
+                console.log('there is no gap in the word')
+            }
+        }
     },
     validateWord(word) {
       if (this.validWords.has(word)) {
@@ -108,6 +148,7 @@ export default {
           this.$emit('word-validated', word);
           this.pendingWordObjs.forEach(tile => this.validatedObjs.push(tile))
           this.pendingWordObjs = []
+          console.log('validatedWords: ', this.validatedObjs)
       } else {
           console.log('Invalid word: ', word);
       }
