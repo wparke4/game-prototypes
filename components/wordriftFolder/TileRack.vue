@@ -17,13 +17,18 @@ export default {
   data() {
     return {
       tiles: [
-        { rackIndex: 0, letter: 'A' },
+        { rackIndex: 1, letter: 'A' },
         { rackIndex: 2, letter: 'Y' },
         { rackIndex: 3, letter: 'P' },
         { rackIndex: 4, letter: 'G' },
         { rackIndex: 5, letter: 'I' },
         { rackIndex: 6, letter: 'S' },
-        { rackIndex: 7, letter: 'F' }
+        { rackIndex: 7, letter: 'E' },
+        { rackIndex: 8, letter: 'R' },
+        { rackIndex: 9, letter: 'S' },
+        { rackIndex: 10, letter: 'M' },
+        { rackIndex: 11, letter: 'A' },
+        { rackIndex: 12, letter: 'N' }
         // Add initial tiles here or fetch them from an API/parent component
       ],
       availableLetters: ['A', 'A', 'B', 'C', 'D', 'E', 'E', 'E', 'F', 'G', 'H', 'I', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'U', 'V', 'W', 'X', 'Y', 'Z'],
@@ -49,7 +54,7 @@ export default {
       this.pendingTiles.forEach(tile => this.validatedTiles.push(tile))
       this.pendingTiles = []
 
-      while (this.tiles.length < 7 && this.availableLetters.length > 0) {
+      while (this.tiles.length < 11 && this.availableLetters.length > 0) {
         const randomIndex = Math.floor(Math.random() * this.availableLetters.length);
         const letter = this.availableLetters.splice(randomIndex, 1)[0];
         this.tiles.push({ rackIndex: this.nextAvailableID, letter });

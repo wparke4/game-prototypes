@@ -45,29 +45,29 @@ export default {
       }
     },
     submitWord() {
-      // push all letters to wordsToValidate
-      this.wordsToValidate.push(this.pendingWordObjs)
+        // push all letters to wordsToValidate
+        this.wordsToValidate.push(this.pendingWordObjs)
 
-       // to do - push all letters separately to their own index of wordsToValidate for adjacent check
-       if (this.firstWord) {
-        const bool = this.startingColCheck()
-        if (!bool) {
-          // to do: call function that rejects the word
-          return
+        // to do - push all letters separately to their own index of wordsToValidate for adjacent check
+        if (this.firstWord) {
+          const bool = this.startingColCheck()
+          if (!bool) {
+            // to do: call function that rejects the word
+            return
+          }
         }
-      }
 
-      this.findWordDirection();
+        this.findWordDirection();
 
-      if (this.direction == 'horizontal') {
-          this.horizontalWordHandler();
-      } else if (this.direction == 'vertical') {
-          this.verticalWordHandler();
-      } else if (this.direction == null) {
-          console.log('direction is not horizontal or vertical')
-          // to do: call a function that rejects the word
-          return
-      }
+        if (this.direction == 'horizontal') {
+            this.horizontalWordHandler();
+        } else if (this.direction == 'vertical') {
+            this.verticalWordHandler();
+        } else if (this.direction == null) {
+            console.log('direction is not horizontal or vertical')
+            // to do: call a function that rejects the word
+            return
+        }
     },
     horizontalWordHandler() {
         this.sortLetters();
@@ -85,9 +85,14 @@ export default {
         this.sortLetters();
         const rowGaps = this.checkVerticalGaps();
         if (rowGaps.length > 0) {
-            console.log('rowGaps: ', rowGaps)
-            return
+            const bool = this.fillRowGaps(rowGaps)
+            if (!bool) {
+                console.log('verticalWordHandler is ending submission because there is not tile to fill gap')
+                // to do: call function that rejects the word
+                return
+            }
         }
+        this.validateWord();
     },
     startingColCheck() {
       //check to ensure that one of the tiles is placed at row index 5, col index 0
@@ -111,14 +116,13 @@ export default {
       const colIndex = firstTile.colIndex
 
       for ( let i = 0; i < this.wordsToValidate[this.currIndex].length; i++) {
-        if (this.wordsToValidate[this.currIndex][i].rowIndex == rowIndex) {
-          matchingRowIndeces++
-        }
-        if (this.wordsToValidate[this.currIndex][i].colIndex == colIndex) {
-          matchingColIndeces++
-        }
+          if (this.wordsToValidate[this.currIndex][i].rowIndex == rowIndex) {
+            matchingRowIndeces++
+          }
+          if (this.wordsToValidate[this.currIndex][i].colIndex == colIndex) {
+            matchingColIndeces++
+          }
       }
-
 
       if (matchingRowIndeces == this.wordsToValidate[this.currIndex].length) {
           this.direction = 'horizontal'
@@ -158,56 +162,28 @@ export default {
         }
 
         return gapColumns;
-
-        /*
-        const pendingString = this.wordsToValidate[this.currIndex].map(tile => tile.letter).join('').toLocaleLowerCase();
-        this.validateWord(pendingString)
-        */
     },
     checkVerticalGaps() {
         const wordArray = this.wordsToValidate[this.currIndex]
 
-        for (let i = 0; i < wordArray.length - 1; i++) {
-            if (wordArray[i].rowIndex + 1 != wordArray[i + 1].rowIndex) {
+        const startingRow = wordArray[0].rowIndex
+        const finalRow = wordArray[wordArray.length - 1].rowIndex
+        const length = finalRow - startingRow
 
-                console.log('there is a gap in the word')
-                this.fillGap(wordArray[i].rowIndex, wordArray[i].colIndex, i)
+        const gapRows = []
 
-            } else {
-                console.log('there is no gap in the word')
+        for (let i = 0; i < length; i++) {
+            const tile = wordArray.find(tile => tile.rowIndex == startingRow + i)
+            if (tile == null) {
+                gapRows.push(startingRow + i)
             }
         }
 
-        const pendingString = this.wordsToValidate[this.currIndex].map(tile => tile.letter).join('').toLocaleLowerCase();
-        this.validateWord(pendingString)
-    },
-    fillGap(row, col, index) {
-        const wordArray = this.wordsToValidate[this.currIndex]
-
-        if ( this.direction == 'horizontal') {
-
-            let gapFiller = this.validatedObjs.find(tile => tile.colIndex == col + 1 && tile.rowIndex == row)
-            console.log('gapFiller: ', gapFiller)
-
-            // add gapFiller to this.wordsToValidate[this.currIndex] at index + 1
-            this.wordsToValidate[this.currIndex].splice(index + 1, 0, gapFiller)
-            this.checkHorizontalGaps()
-
-        } else if (this.direction == 'vertical') {
-
-            let gapFiller = this.validatedObjs.find(tile => tile.rowIndex == row + 1 && tile.colIndex == col)
-            console.log('gapFiller: ', gapFiller)
-
-            // add gapFiller to this.wordsToValidate[this.currIndex] at index + 1
-            this.wordsToValidate[this.currIndex].splice(index + 1, 0, gapFiller)
-            this.checkVerticalGaps()
-
-        } else {
-            console.log('direction is not horizontal or vertical')
-        }
+        return gapRows;
     },
     fillColGaps(gapsArray) {
         const wordArray = this.wordsToValidate[this.currIndex]
+        const startingCol = wordArray[0].colIndex
         const row = wordArray[0].rowIndex
 
         for (let i = 0; i < gapsArray.length; i++) {
@@ -220,8 +196,29 @@ export default {
             }
 
             // add gapFiller to this.wordsToValidate[this.currIndex] at index + 1
-            this.wordsToValidate[this.currIndex].splice(i + 1, 0, gapFiller)
+            this.wordsToValidate[this.currIndex].splice(gapsArray[i] - startingCol, 0, gapFiller)
         }
+        return true;
+    },
+    fillRowGaps(gapsArray) {
+        const wordArray = this.wordsToValidate[this.currIndex]
+
+        const startingRow = wordArray[0].rowIndex
+        const col = wordArray[0].colIndex
+
+        for (let i = 0; i < gapsArray.length; i++) {
+            let gapFiller = this.validatedObjs.find(tile => tile.rowIndex == gapsArray[i] && tile.colIndex == col)
+            console.log('gapFiller: ', gapFiller)
+
+            if (gapFiller == null) {
+                console.log('there is no tile to fill gap at row index: ', gapsArray[i])
+                return false
+            }
+
+            // add gapFiller to this.wordsToValidate[this.currIndex] at index + 1
+            this.wordsToValidate[this.currIndex].splice(gapsArray[i] - startingRow, 0, gapFiller)
+        }
+        return true;
     },
     beforeWordCheck() {
         // to do: check if there are any letters before or after the word
@@ -246,6 +243,7 @@ export default {
     },
     validateWord() {
         const currentWord = this.wordsToValidate[this.currIndex].map(tile => tile.letter).join('').toLocaleLowerCase();
+        console.log('validateWord has been called')
 
         if (this.validWords.has(currentWord)) {
             console.log('Valid word: ', currentWord);
