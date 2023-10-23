@@ -1,7 +1,6 @@
 <template>
   <div class="tile-rack"
       @dragover.prevent
-      @drop="event => handleDrop(event)"
   >
     <div
       v-for="tile in tiles"

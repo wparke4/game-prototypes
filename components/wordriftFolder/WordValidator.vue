@@ -150,14 +150,6 @@ export default {
         const aboveOrBelow = this.singleLetterVerticalCheck();
 
         // if single letter submission adjacent to words in both directions
-        if (beforeOrAfter && aboveOrBelow) {
-            console.log('single tile submission connecting both a vertical and horizontal word')
-            // treat word as horizontal
-            this.direction = 'horizontal'
-            this.perpendicularDirection = 'vertical'
-            this.beforeColCheck();
-            this.afterColCheck();
-        } else
         if (beforeOrAfter) {
             console.log('there is a tile before or after the word')
             this.direction = 'horizontal'

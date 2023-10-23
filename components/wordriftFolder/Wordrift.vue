@@ -1,6 +1,7 @@
 <template>
     <div
         class="flex flex-col items-center justify-center space-y-3 h-screen"
+        @dragover.prevent
     >
         <Grid
             ref="grid"
@@ -38,7 +39,9 @@ export default {
     methods: {
         tilePlacedOnGrid(tileData, rowIndex, colIndex) {
             console.log('wordrift says tileData: ', tileData)
-            this.$refs.tileRack.removeTile(tileData.rackIndex);
+            if (!tileData.typeCell) {
+                this.$refs.tileRack.removeTile(tileData.rackIndex);
+            }
             this.$refs.wordValidator.addTile(tileData.letter, rowIndex, colIndex);
         },
         removeTileFromGrid(rowIndex, colIndex) {
@@ -55,7 +58,7 @@ export default {
 
             this.$refs.wordValidator.removeTile(rowIndex, colIndex);
             this.$refs.grid.clearCell(tileData);
-        }
+        },
     }
 }
 </script>
