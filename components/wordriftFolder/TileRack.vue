@@ -1,11 +1,16 @@
 <template>
-  <div class="tile-rack">
+  <div class="tile-rack"
+      @dragover.prevent
+      @drop="event => handleDrop(event)"
+  >
     <div
       v-for="tile in tiles"
       :key="tile.id"
       class="tile"
       @dragstart="event => startDrag(event, tile)"
       draggable="true"
+      @dragover.prevent
+      @drop="event => handleDrop(event)"
     >
       {{ tile.letter }}
     </div>
@@ -32,7 +37,7 @@ export default {
         // Add initial tiles here or fetch them from an API/parent component
       ],
       availableLetters: ['A', 'A', 'B', 'C', 'D', 'E', 'E', 'E', 'F', 'G', 'H', 'I', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'U', 'V', 'W', 'X', 'Y', 'Z'],
-      nextAvailableID: 8,
+      nextAvailableID: 13,
       pendingTiles: [],
       validatedTiles: []
     };
@@ -59,7 +64,19 @@ export default {
         const letter = this.availableLetters.splice(randomIndex, 1)[0];
         this.tiles.push({ rackIndex: this.nextAvailableID, letter });
         this.nextAvailableID++;
-    }
+     }
+    },
+    handleDrop(event) {
+        const tileData = JSON.parse(event.dataTransfer.getData("tile"));
+        if (tileData.typeCell) {
+            return this.placeTileOnRack(tileData);
+        }
+    },
+    placeTileOnRack(tileData) {
+        console.log('tile has been droped in rack', tileData)
+        this.tiles.push(tileData)
+        tileData.typeCell = false;
+        this.$emit('tile-placed-on-rack', tileData)
     }
   }
 }

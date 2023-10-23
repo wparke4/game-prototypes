@@ -9,6 +9,7 @@
         />
         <TileRack
             ref="tileRack"
+            @tile-placed-on-rack="tilePlacedOnRack"
         />
         <WordValidator
             ref="wordValidator"
@@ -47,6 +48,13 @@ export default {
             this.$refs.grid.wordValidated();
             this.$refs.tileRack.replenishTiles();
             //this.$refs.wordValidator.resetWordValidator();
+        },
+        tilePlacedOnRack(tileData) {
+            const rowIndex = tileData.rowIndex;
+            const colIndex = tileData.colIndex;
+
+            this.$refs.wordValidator.removeTile(rowIndex, colIndex);
+            this.$refs.grid.clearCell(tileData);
         }
     }
 }

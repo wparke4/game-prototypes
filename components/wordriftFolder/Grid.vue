@@ -99,6 +99,22 @@ export default {
             this.pendingTiles.splice(index, 1);
           }
       },
+      clearCell(tileData) {
+            console.log('clearCell called')
+            const rowIndex = tileData.row
+            const colIndex = tileData.col
+
+            this.grid[rowIndex].cells[colIndex].letter = null;
+            this.$emit('remove-tile', rowIndex, colIndex)
+
+            const tileObj = this.pendingTiles.find(tile => tile.row == rowIndex && tile.col == colIndex);
+
+            //remove old cell from pendingWordObjs
+            const index = this.pendingTiles.indexOf(tileObj);
+            if (index > -1) {
+            this.pendingTiles.splice(index, 1);
+            }
+      },
       startDrag(event, cell) {
           // Logic for handling drag start
           // e.g., sending the tile data to be received by a drop target

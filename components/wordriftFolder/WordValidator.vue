@@ -48,11 +48,6 @@ export default {
     submitWord() {
         this.pushToWordsToValidate();
 
-        // function only applies to single letter submissions in the first index of wordsToValidate (aka the primary submission)
-        if (this.wordsToValidate[0].length == 1) {
-          return this.handleSingleLetter();
-        }
-
         // to do - push all letters separately to their own index of wordsToValidate for adjacent check
         if (this.firstWord) {
           const bool = this.startingColCheck()
@@ -68,6 +63,11 @@ export default {
             // to do: call function that rejects the word
             return
           }
+        }
+
+        // function only applies to single letter submissions in the first index of wordsToValidate (aka the primary submission)
+        if (this.wordsToValidate[0].length == 1) {
+          return this.handleSingleLetter();
         }
 
         this.findWordDirection();
@@ -92,19 +92,25 @@ export default {
         // only checking on the initial submission
         const word = this.wordsToValidate[0]
 
-        word.forEach(tile => {
-            const row = tile.rowIndex
-            const col = tile.colIndex
+        for (let i = 0; i < word.length; i++) {
+
+            const row = word[i].rowIndex
+            const col = word[i].colIndex
 
             const beforeTile = this.validatedObjs.find(tile => tile.rowIndex == row && tile.colIndex == col - 1)
             const afterTile = this.validatedObjs.find(tile => tile.rowIndex == row && tile.colIndex == col + 1)
             const aboveTile = this.validatedObjs.find(tile => tile.rowIndex == row - 1 && tile.colIndex == col)
             const belowTile = this.validatedObjs.find(tile => tile.rowIndex == row + 1 && tile.colIndex == col)
 
+            //console.log('connectedCheck says ', beforeTile, afterTile, aboveTile, belowTile)
+
             if (beforeTile || afterTile || aboveTile || belowTile) {
+                console.log('connectedCheck says word is connected')
                 return true;
             }
-        })
+        }
+
+        return false;
     },
     handlePerpendicularWords() {
         this.currIndex++
@@ -131,8 +137,9 @@ export default {
               this.wordsToValidate.splice(this.currIndex, 1)
               this.currIndex--
               return this.checkIfLastWord()
+            } else {
+              return this.validateWord();
             }
-            this.perpendicularVerticalCheck(word)
         } else {
             console.log('perpendicularDirection is not horizontal or vertical')
             return
@@ -362,8 +369,6 @@ export default {
         if (beforeTile) {
             this.wordsToValidate[this.currIndex].unshift(beforeTile)
             return this.beforeColCheck();
-        } else {
-            console.log('there is no tile before the word')
         }
     },
     beforeRowCheck() {
@@ -374,8 +379,6 @@ export default {
         if(beforeTile) {
             this.wordsToValidate[this.currIndex].unshift(beforeTile)
             return this.beforeRowCheck();
-        } else {
-            console.log('there is no tile before the word')
         }
     },
     afterColCheck() {
@@ -386,8 +389,6 @@ export default {
         if (afterTile) {
             this.wordsToValidate[this.currIndex].push(afterTile)
             return this.afterColCheck();
-        } else {
-            console.log('there is no tile after the word')
         }
     },
     afterRowCheck() {
@@ -398,8 +399,6 @@ export default {
         if (afterTile) {
             this.wordsToValidate[this.currIndex].push(afterTile)
             return this.afterRowCheck();
-        } else {
-            console.log('there is no tile after the word')
         }
     },
     validateWord() {
