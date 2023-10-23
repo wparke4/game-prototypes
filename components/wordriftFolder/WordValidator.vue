@@ -11,7 +11,8 @@ export default {
           validatedObjs: [],
           firstWord: true,
           currIndex: 0,
-          direction: null
+          direction: null,
+          perpendicularDirection: null
       }
   },
   async mounted() {
@@ -45,13 +46,9 @@ export default {
       }
     },
     submitWord() {
-        // push all letters as to wordsToValidate as an array
-        this.wordsToValidate.push(this.pendingWordObjs)
-        // push each letter into separate index of wordsToValidate. Used for perpendicular check.
-        this.wordsToValidate[0].forEach(tile => this.wordsToValidate.push([tile]))
-        console.log('wordsToValidate: ', this.wordsToValidate)
+        this.pushToWordsToValidate();
 
-        // handle single letter submissions
+        // function only applies to single letter submissions in the first index of wordsToValidate (aka the primary submission)
         if (this.wordsToValidate[0].length == 1) {
           return this.handleSingleLetter();
         }
@@ -60,6 +57,14 @@ export default {
         if (this.firstWord) {
           const bool = this.startingColCheck()
           if (!bool) {
+            // to do: call function that rejects the word
+            return
+          }
+        } else {
+          // check if the word is connected to another word
+          const connected = this.connectedCheck();
+          if (!connected) {
+            console.log('word is not connected to another word')
             // to do: call function that rejects the word
             return
           }
@@ -77,19 +82,88 @@ export default {
             return
         }
     },
+    pushToWordsToValidate() {
+        // push all letters as to wordsToValidate as an array
+        this.wordsToValidate.push(this.pendingWordObjs)
+        // push each letter into separate index of wordsToValidate. Used for perpendicular check.
+        this.wordsToValidate[0].forEach(tile => this.wordsToValidate.push([tile]))
+    },
+    connectedCheck() {
+        // only checking on the initial submission
+        const word = this.wordsToValidate[0]
+
+        word.forEach(tile => {
+            const row = tile.rowIndex
+            const col = tile.colIndex
+
+            const beforeTile = this.validatedObjs.find(tile => tile.rowIndex == row && tile.colIndex == col - 1)
+            const afterTile = this.validatedObjs.find(tile => tile.rowIndex == row && tile.colIndex == col + 1)
+            const aboveTile = this.validatedObjs.find(tile => tile.rowIndex == row - 1 && tile.colIndex == col)
+            const belowTile = this.validatedObjs.find(tile => tile.rowIndex == row + 1 && tile.colIndex == col)
+
+            if (beforeTile || afterTile || aboveTile || belowTile) {
+                return true;
+            }
+        })
+    },
+    handlePerpendicularWords() {
+        this.currIndex++
+        const word = this.wordsToValidate[this.currIndex]
+
+        if (this.perpendicularDirection == 'horizontal') {
+            this.beforeColCheck();
+            this.afterColCheck();
+
+            // if still a single letter, remove from wordsToValidate
+            if (word.length == 1) {
+              this.wordsToValidate.splice(this.currIndex, 1)
+              this.currIndex--
+              return this.checkIfLastWord()
+            } else {
+              return this.validateWord();
+            }
+
+        } else if (this.perpendicularDirection == 'vertical') {
+            this.beforeRowCheck();
+            this.afterRowCheck();
+
+            if (word.length == 1) {
+              this.wordsToValidate.splice(this.currIndex, 1)
+              this.currIndex--
+              return this.checkIfLastWord()
+            }
+            this.perpendicularVerticalCheck(word)
+        } else {
+            console.log('perpendicularDirection is not horizontal or vertical')
+            return
+        }
+    },
     handleSingleLetter() {
         const beforeOrAfter = this.singleLetterHorizontalCheck();
         const aboveOrBelow = this.singleLetterVerticalCheck();
 
+        // if single letter submission adjacent to words in both directions
+        if (beforeOrAfter && aboveOrBelow) {
+            console.log('single tile submission connecting both a vertical and horizontal word')
+            // treat word as horizontal
+            this.direction = 'horizontal'
+            this.perpendicularDirection = 'vertical'
+            // push duplicate of tile to wordsToValidate to check for vertical word
+            this.wordsToValidate.push(this.pendingWordObjs[0])
+            this.beforeColCheck();
+            this.afterColCheck();
+        } else
         if (beforeOrAfter) {
             console.log('there is a tile before or after the word')
             this.direction = 'horizontal'
+            this.perpendicularDirection = 'vertical'
             this.beforeColCheck();
             this.afterColCheck();
         } else
         if (aboveOrBelow) {
-          this.direction = 'vertical'
-            console.log('there is a tile before or after the word')
+            this.direction = 'vertical'
+            this.perpendicularDirection = 'horizontal'
+            console.log('there is a tile above or below the word')
             this.beforeRowCheck();
             this.afterRowCheck();
         } else {
@@ -159,7 +233,6 @@ export default {
       const firstColTile = this.wordsToValidate[0].find(tile => tile.colIndex == 0);
 
       if (firstColTile) {
-        console.log('firstCol is occupied')
         return true;
       } else {
         console.log('firstCol is not occupied')
@@ -186,9 +259,12 @@ export default {
 
       if (matchingRowIndeces == this.wordsToValidate[this.currIndex].length) {
           this.direction = 'horizontal'
+          this.perpendicularDirection = 'vertical'
           //this.sortLetters(wordDirection)
-      } else if (matchingColIndeces == this.wordsToValidate[this.currIndex].length) {
+      } else
+      if (matchingColIndeces == this.wordsToValidate[this.currIndex].length) {
           this.direction = 'vertical'
+          this.perpendicularDirection = 'horizontal'
           //this.sortLetters(wordDirection)
       } else {
           console.log('word is not horizontal or vertical')
@@ -248,7 +324,6 @@ export default {
 
         for (let i = 0; i < gapsArray.length; i++) {
             let gapFiller = this.validatedObjs.find(tile => tile.colIndex == gapsArray[i] && tile.rowIndex == row)
-            console.log('gapFiller: ', gapFiller)
 
             if (gapFiller == null) {
                 console.log('there is no tile to fill gap at col index: ', gapsArray[i])
@@ -268,7 +343,6 @@ export default {
 
         for (let i = 0; i < gapsArray.length; i++) {
             let gapFiller = this.validatedObjs.find(tile => tile.rowIndex == gapsArray[i] && tile.colIndex == col)
-            console.log('gapFiller: ', gapFiller)
 
             if (gapFiller == null) {
                 console.log('there is no tile to fill gap at row index: ', gapsArray[i])
@@ -286,7 +360,6 @@ export default {
 
         const beforeTile = this.validatedObjs.find(tile => tile.rowIndex == wordArray[0].rowIndex && tile.colIndex == firstCol - 1)
         if (beforeTile) {
-            console.log('there is a tile before the word')
             this.wordsToValidate[this.currIndex].unshift(beforeTile)
             return this.beforeColCheck();
         } else {
@@ -299,7 +372,6 @@ export default {
 
         const beforeTile = this.validatedObjs.find(tile => tile.colIndex == wordArray[0].colIndex && tile.rowIndex == firstRow - 1)
         if(beforeTile) {
-            console.log('there is a tile before the word')
             this.wordsToValidate[this.currIndex].unshift(beforeTile)
             return this.beforeRowCheck();
         } else {
@@ -312,7 +384,6 @@ export default {
 
         const afterTile = this.validatedObjs.find(tile => tile.rowIndex == wordArray[0].rowIndex && tile.colIndex == lastCol + 1)
         if (afterTile) {
-            console.log('there is a tile after the word')
             this.wordsToValidate[this.currIndex].push(afterTile)
             return this.afterColCheck();
         } else {
@@ -325,7 +396,6 @@ export default {
 
         const afterTile = this.validatedObjs.find(tile => tile.colIndex == wordArray[0].colIndex && tile.rowIndex == lastRow + 1)
         if (afterTile) {
-            console.log('there is a tile after the word')
             this.wordsToValidate[this.currIndex].push(afterTile)
             return this.afterRowCheck();
         } else {
@@ -334,22 +404,33 @@ export default {
     },
     validateWord() {
         const currentWord = this.wordsToValidate[this.currIndex].map(tile => tile.letter).join('').toLocaleLowerCase();
-        console.log('validateWord has been called')
 
         if (this.validWords.has(currentWord)) {
             console.log('Valid word: ', currentWord);
             if (this.firstWord) {
               this.firstWord = false
             }
-            this.$emit('word-validated', currentWord);
-            this.pendingWordObjs.forEach(tile => this.validatedObjs.push(tile))
-            this.pendingWordObjs = []
-            this.wordsToValidate = []
-            console.log('validatedWords: ', this.validatedObjs)
         } else {
             console.log('Invalid word: ', currentWord);
+            // to do: call function that rejects the word
+            return
         }
+        this.checkIfLastWord(currentWord);
+    },
+    checkIfLastWord(currentWord) {
+      // check if all words have been validated
+      if (this.currIndex == this.wordsToValidate.length - 1) {
+          this.currIndex = 0
+          this.$emit('word-validated', currentWord);
+          this.pendingWordObjs.forEach(tile => this.validatedObjs.push(tile))
+          this.pendingWordObjs = []
+          this.wordsToValidate = []
+          this.direction = null
+          this.perpendicularDirection = null
+      } else {
+          this.handlePerpendicularWords();
       }
+    }
   }
 }
 </script>
