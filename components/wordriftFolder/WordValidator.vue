@@ -53,7 +53,7 @@ export default {
           const bool = this.startingColCheck()
           if (!bool) {
             // to do: call function that rejects the word
-            return
+            return this.rejectSubmission();
           }
         } else {
           // check if the word is connected to another word
@@ -61,7 +61,7 @@ export default {
           if (!connected) {
             console.log('word is not connected to another word')
             // to do: call function that rejects the word
-            return
+            return this.rejectSubmission();
           }
         }
 
@@ -79,7 +79,7 @@ export default {
         } else if (this.direction == null) {
             console.log('direction is not horizontal or vertical')
             // to do: call a function that rejects the word
-            return
+            return this.rejectSubmission();
         }
     },
     pushToWordsToValidate() {
@@ -142,7 +142,7 @@ export default {
             }
         } else {
             console.log('perpendicularDirection is not horizontal or vertical')
-            return
+            return this.rejectSubmission();
         }
     },
     handleSingleLetter() {
@@ -155,8 +155,6 @@ export default {
             // treat word as horizontal
             this.direction = 'horizontal'
             this.perpendicularDirection = 'vertical'
-            // push duplicate of tile to wordsToValidate to check for vertical word
-            this.wordsToValidate.push(this.pendingWordObjs[0])
             this.beforeColCheck();
             this.afterColCheck();
         } else
@@ -176,7 +174,7 @@ export default {
         } else {
             console.log('there is no tile before or after the word')
             // to do: reject the word
-            return
+            return this.rejectSubmission();
         }
         this.validateWord();
     },
@@ -213,7 +211,7 @@ export default {
             const bool = this.fillColGaps(colGaps)
             if (!bool) {
                 // to do: call function that rejects the word
-                return
+                return this.rejectSubmission();
             }
         }
         this.beforeColCheck();
@@ -228,7 +226,7 @@ export default {
             if (!bool) {
                 console.log('verticalWordHandler is ending submission because there is not tile to fill gap')
                 // to do: call function that rejects the word
-                return
+                return this.rejectSubmission();
             }
         }
         this.beforeRowCheck();
@@ -412,23 +410,34 @@ export default {
         } else {
             console.log('Invalid word: ', currentWord);
             // to do: call function that rejects the word
-            return
+            return this.rejectSubmission();
         }
         this.checkIfLastWord(currentWord);
     },
     checkIfLastWord(currentWord) {
-      // check if all words have been validated
-      if (this.currIndex == this.wordsToValidate.length - 1) {
-          this.currIndex = 0
-          this.$emit('word-validated', currentWord);
-          this.pendingWordObjs.forEach(tile => this.validatedObjs.push(tile))
-          this.pendingWordObjs = []
-          this.wordsToValidate = []
-          this.direction = null
-          this.perpendicularDirection = null
-      } else {
-          this.handlePerpendicularWords();
-      }
+        // check if all words have been validated
+        if (this.currIndex == this.wordsToValidate.length - 1) {
+            this.$emit('word-validated', currentWord);
+            console.log('all words have been validated')
+            return this.clearWords();
+        } else {
+            console.log('there are still words to validate. wordsToValidate: ', this.wordsToValidate)
+            return this.handlePerpendicularWords();
+        }
+    },
+    rejectSubmission() {
+        console.log('word has been rejected')
+        // to do: emit event for other components to handle word rejection
+        // probably want to send pendingWordObjs to tile rack and clear grid cells
+        this.clearWords();
+    },
+    clearWords() {
+        this.currIndex = 0
+        this.pendingWordObjs.forEach(tile => this.validatedObjs.push(tile))
+        this.pendingWordObjs = []
+        this.wordsToValidate = []
+        this.direction = null
+        this.perpendicularDirection = null
     }
   }
 }
