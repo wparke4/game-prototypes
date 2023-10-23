@@ -48,6 +48,11 @@ export default {
         // push all letters to wordsToValidate
         this.wordsToValidate.push(this.pendingWordObjs)
 
+        // handle single letter submissions
+        if (this.wordsToValidate[0].length == 1) {
+          return this.handleSingleLetter();
+        }
+
         // to do - push all letters separately to their own index of wordsToValidate for adjacent check
         if (this.firstWord) {
           const bool = this.startingColCheck()
@@ -69,6 +74,33 @@ export default {
             return
         }
     },
+    handleSingleLetter() {
+        const word = this.wordsToValidate[this.currIndex]
+        const firstTile = word[0]
+        const row = firstTile.rowIndex
+        const col = firstTile.colIndex
+
+        const beforeTile = this.validatedObjs.find(tile => tile.rowIndex == row && tile.colIndex == col - 1)
+        const afterTile = this.validatedObjs.find(tile => tile.rowIndex == row && tile.colIndex == col + 1)
+        const aboveTile = this.validatedObjs.find(tile => tile.rowIndex == row - 1 && tile.colIndex == col)
+        const belowTile = this.validatedObjs.find(tile => tile.rowIndex == row + 1 && tile.colIndex == col)
+
+        if (beforeTile || afterTile) {
+            console.log('there is a tile before or after the word')
+            this.beforeColCheck();
+            this.afterColCheck();
+        } else
+        if (aboveTile || belowTile) {
+            console.log('there is a tile before or after the word')
+            this.beforeRowCheck();
+            this.afterRowCheck();
+        } else {
+            console.log('there is no tile before or after the word')
+            // to do: reject the word
+            return
+        }
+        this.validateWord();
+    },
     horizontalWordHandler() {
         this.sortLetters();
         const colGaps = this.checkHorizontalGaps();
@@ -80,6 +112,7 @@ export default {
             }
         }
         this.beforeColCheck();
+        this.afterColCheck();
         this.validateWord();
     },
     verticalWordHandler() {
@@ -94,6 +127,7 @@ export default {
             }
         }
         this.beforeRowCheck();
+        this.afterRowCheck();
         this.validateWord();
     },
     startingColCheck() {
@@ -246,6 +280,32 @@ export default {
             return this.beforeRowCheck();
         } else {
             console.log('there is no tile before the word')
+        }
+    },
+    afterColCheck() {
+        const wordArray = this.wordsToValidate[this.currIndex]
+        const lastCol = wordArray[wordArray.length - 1].colIndex
+
+        const afterTile = this.validatedObjs.find(tile => tile.rowIndex == wordArray[0].rowIndex && tile.colIndex == lastCol + 1)
+        if (afterTile) {
+            console.log('there is a tile after the word')
+            this.wordsToValidate[this.currIndex].push(afterTile)
+            return this.afterColCheck();
+        } else {
+            console.log('there is no tile after the word')
+        }
+    },
+    afterRowCheck() {
+        const wordArray = this.wordsToValidate[this.currIndex]
+        const lastRow = wordArray[wordArray.length - 1].rowIndex
+
+        const afterTile = this.validatedObjs.find(tile => tile.colIndex == wordArray[0].colIndex && tile.rowIndex == lastRow + 1)
+        if (afterTile) {
+            console.log('there is a tile after the word')
+            this.wordsToValidate[this.currIndex].push(afterTile)
+            return this.afterRowCheck();
+        } else {
+            console.log('there is no tile after the word')
         }
     },
     beforeWordCheck() {
