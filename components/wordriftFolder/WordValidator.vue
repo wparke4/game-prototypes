@@ -45,8 +45,11 @@ export default {
       }
     },
     submitWord() {
-        // push all letters to wordsToValidate
+        // push all letters as to wordsToValidate as an array
         this.wordsToValidate.push(this.pendingWordObjs)
+        // push each letter into separate index of wordsToValidate. Used for perpendicular check.
+        this.wordsToValidate[0].forEach(tile => this.wordsToValidate.push([tile]))
+        console.log('wordsToValidate: ', this.wordsToValidate)
 
         // handle single letter submissions
         if (this.wordsToValidate[0].length == 1) {
@@ -75,22 +78,17 @@ export default {
         }
     },
     handleSingleLetter() {
-        const word = this.wordsToValidate[this.currIndex]
-        const firstTile = word[0]
-        const row = firstTile.rowIndex
-        const col = firstTile.colIndex
+        const beforeOrAfter = this.singleLetterHorizontalCheck();
+        const aboveOrBelow = this.singleLetterVerticalCheck();
 
-        const beforeTile = this.validatedObjs.find(tile => tile.rowIndex == row && tile.colIndex == col - 1)
-        const afterTile = this.validatedObjs.find(tile => tile.rowIndex == row && tile.colIndex == col + 1)
-        const aboveTile = this.validatedObjs.find(tile => tile.rowIndex == row - 1 && tile.colIndex == col)
-        const belowTile = this.validatedObjs.find(tile => tile.rowIndex == row + 1 && tile.colIndex == col)
-
-        if (beforeTile || afterTile) {
+        if (beforeOrAfter) {
             console.log('there is a tile before or after the word')
+            this.direction = 'horizontal'
             this.beforeColCheck();
             this.afterColCheck();
         } else
-        if (aboveTile || belowTile) {
+        if (aboveOrBelow) {
+          this.direction = 'vertical'
             console.log('there is a tile before or after the word')
             this.beforeRowCheck();
             this.afterRowCheck();
@@ -100,6 +98,32 @@ export default {
             return
         }
         this.validateWord();
+    },
+    singleLetterHorizontalCheck() {
+        const word = this.wordsToValidate[this.currIndex]
+        const firstTile = word[0]
+        const row = firstTile.rowIndex
+        const col = firstTile.colIndex
+
+        const beforeTile = this.validatedObjs.find(tile => tile.rowIndex == row && tile.colIndex == col - 1)
+        const afterTile = this.validatedObjs.find(tile => tile.rowIndex == row && tile.colIndex == col + 1)
+
+        if (beforeTile || afterTile) {
+            return true;
+        }
+    },
+    singleLetterVerticalCheck() {
+        const word = this.wordsToValidate[this.currIndex]
+        const firstTile = word[0]
+        const row = firstTile.rowIndex
+        const col = firstTile.colIndex
+
+        const aboveTile = this.validatedObjs.find(tile => tile.rowIndex == row - 1 && tile.colIndex == col)
+        const belowTile = this.validatedObjs.find(tile => tile.rowIndex == row + 1 && tile.colIndex == col)
+
+        if (aboveTile || belowTile) {
+            return true;
+        }
     },
     horizontalWordHandler() {
         this.sortLetters();
@@ -306,27 +330,6 @@ export default {
             return this.afterRowCheck();
         } else {
             console.log('there is no tile after the word')
-        }
-    },
-    beforeWordCheck() {
-        // to do: check if there are any letters before or after the word
-        const word = this.wordsToValidate[this.currIndex]
-        const firstTile = word[0]
-        if ( this.direction == 'horizontal' ) {
-
-            const beforeTile = this.validatedObjs.find(tile => tile.rowIndex == firstTile.rowIndex && tile.colIndex == firstTile.colIndex - 1)
-            if (beforeTile) {
-                console.log('there is a tile before the word')
-                this.wordsToValidate[this.currIndex].unshift(beforeTile)
-            }
-        } else if ( this.direction == 'vertical' ) {
-            const beforeTile = this.validatedObjs.find(tile => tile.rowIndex == firstTile.rowIndex - 1 && tile.colIndex == firstTile.colIndex)
-            if (beforeTile) {
-                console.log('there is a tile before the word')
-                this.wordsToValidate[this.currIndex].unshift(beforeTile)
-            }
-        } else {
-            console.log('direction is not horizontal or vertical')
         }
     },
     validateWord() {
