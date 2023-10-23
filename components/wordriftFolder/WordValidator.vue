@@ -79,6 +79,7 @@ export default {
                 return
             }
         }
+        this.beforeColCheck();
         this.validateWord();
     },
     verticalWordHandler() {
@@ -92,6 +93,7 @@ export default {
                 return
             }
         }
+        this.beforeRowCheck();
         this.validateWord();
     },
     startingColCheck() {
@@ -219,6 +221,32 @@ export default {
             this.wordsToValidate[this.currIndex].splice(gapsArray[i] - startingRow, 0, gapFiller)
         }
         return true;
+    },
+    beforeColCheck() {
+        const wordArray = this.wordsToValidate[this.currIndex]
+        const firstCol = wordArray[0].colIndex
+
+        const beforeTile = this.validatedObjs.find(tile => tile.rowIndex == wordArray[0].rowIndex && tile.colIndex == firstCol - 1)
+        if (beforeTile) {
+            console.log('there is a tile before the word')
+            this.wordsToValidate[this.currIndex].unshift(beforeTile)
+            return this.beforeColCheck();
+        } else {
+            console.log('there is no tile before the word')
+        }
+    },
+    beforeRowCheck() {
+        const wordArray = this.wordsToValidate[this.currIndex]
+        const firstRow = wordArray[0].rowIndex
+
+        const beforeTile = this.validatedObjs.find(tile => tile.colIndex == wordArray[0].colIndex && tile.rowIndex == firstRow - 1)
+        if(beforeTile) {
+            console.log('there is a tile before the word')
+            this.wordsToValidate[this.currIndex].unshift(beforeTile)
+            return this.beforeRowCheck();
+        } else {
+            console.log('there is no tile before the word')
+        }
     },
     beforeWordCheck() {
         // to do: check if there are any letters before or after the word
