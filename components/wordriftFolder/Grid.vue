@@ -9,7 +9,7 @@
               v-for="cell in row.cells"
               :key="cell.id"
               class="grid-cell"
-              :class="{ 'background-color-green-500': !isDraggable(cell.id) }"
+              :class="{ 'background-color-green-500': isValidated(cell.id) }"
               @dragstart="event => startDrag(event, cell)"
               :draggable="isDraggable(cell.id)"
               @dragover.prevent
@@ -129,13 +129,21 @@ export default {
 
       },
       isDraggable(id) {
-          // if the cell is in validatedTiles, it is not draggable
-          const tileObj = this.validatedTiles.find(tile => tile.id == id);
-          if (tileObj) {
-              return false
-          } else {
-              return true
-          }
+            const pendingObj = this.pendingTiles.find(tile => tile.id == id);
+
+            if (pendingObj) {
+                return true
+            } else {
+                return false
+            }
+      },
+      isValidated(id) {
+            const tileObj = this.validatedTiles.find(tile => tile.id == id);
+            if (tileObj) {
+                return true
+            } else {
+                return false
+            }
       }
   }
 }

@@ -418,7 +418,7 @@ export default {
         }
     },
     rejectSubmission() {
-        console.log('word has been rejected')
+        console.log('word has been rejected', this.wordsToValidate)
         // to do: emit event for other components to handle word rejection
         // probably want to send pendingWordObjs to tile rack and clear grid cells
         this.clearWords();
