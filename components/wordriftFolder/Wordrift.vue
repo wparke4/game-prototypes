@@ -40,7 +40,7 @@ export default {
         tilePlacedOnGrid(tileData, rowIndex, colIndex) {
             console.log('wordrift says tileData: ', tileData)
             if (!tileData.typeCell) {
-                this.$refs.tileRack.removeTile(tileData.rackIndex);
+                this.$refs.tileRack.removeTile(tileData.id);
             }
             this.$refs.wordValidator.addTile(tileData.letter, rowIndex, colIndex);
         },
@@ -49,7 +49,7 @@ export default {
         },
         wordValidated() {
             this.$refs.grid.wordValidated();
-            this.$refs.tileRack.replenishTiles();
+            this.$refs.tileRack.validateTiles();
             //this.$refs.wordValidator.resetWordValidator();
         },
         tilePlacedOnRack(tileData) {
