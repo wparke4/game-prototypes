@@ -3,6 +3,9 @@
         class="flex flex-col items-center justify-center space-y-3 h-screen"
         @dragover.prevent
     >
+        <UpTimer
+            ref="upTimer"
+        />
         <Grid
             ref="grid"
             @tile-placed="tilePlacedOnGrid"
@@ -29,12 +32,14 @@
 import TileRack from "@/components/wordriftFolder/TileRack.vue";
 import Grid from "@/components/wordriftFolder/Grid.vue";
 import WordValidator from "@/components/wordriftFolder/WordValidator.vue";
+import UpTimer from "@/components/wordriftFolder/UpTimer.vue";
 
 export default {
     components: {
         TileRack,
         Grid,
-        WordValidator
+        WordValidator,
+        UpTimer
     },
     methods: {
         tilePlacedOnGrid(tileData, rowIndex, colIndex) {
@@ -43,6 +48,7 @@ export default {
                 this.$refs.tileRack.removeTile(tileData.id);
             }
             this.$refs.wordValidator.addTile(tileData.letter, rowIndex, colIndex);
+            this.$refs.upTimer.startTimer();
         },
         removeTileFromGrid(rowIndex, colIndex) {
             this.$refs.wordValidator.removeTile(rowIndex, colIndex);
