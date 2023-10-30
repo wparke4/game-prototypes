@@ -36,14 +36,17 @@ export default {
       this.pendingWordObjs.push(tileObj);
     },
     removeTile(rowIndex, colIndex) {
+      console.log('wordValidator says rowIndex: ', rowIndex, ' colIndex: ', colIndex)
       // find the obj in pendingWordObjs that matches the rowIndex, and colIndex
       const tileObj = this.pendingWordObjs.find(tile => tile.rowIndex == rowIndex && tile.colIndex == colIndex);
+      console.log('wordValidator says tileObj: ', tileObj)
 
       //remove tileObj from pendingWordObjs
       const index = this.pendingWordObjs.indexOf(tileObj);
       if (index > -1) {
         this.pendingWordObjs.splice(index, 1);
       }
+      console.log('wordValidator says pendingWordObjs: ', this.pendingWordObjs)
     },
     submitWord() {
         this.pushToWordsToValidate();
@@ -430,6 +433,21 @@ export default {
         this.wordsToValidate = []
         this.direction = null
         this.perpendicularDirection = null
+        this.gameOverCheck();
+    },
+    gameOverCheck() {
+        //there are currntly 20 columns
+        const lastCol = 19
+        console.log('lastCol: ', lastCol)
+        this.validatedObjs.forEach(tile => {
+            if (tile.colIndex == lastCol) {
+                console.log('game is over')
+                //emit event to stop timer
+                this.$emit('game-over')
+                // to do: call function that ends the game
+                return true;
+            }
+        })
     }
   }
 }

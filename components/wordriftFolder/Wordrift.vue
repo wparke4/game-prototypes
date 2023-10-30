@@ -18,6 +18,7 @@
         <WordValidator
             ref="wordValidator"
             @word-validated="wordValidated"
+            @game-over="gameOver"
         />
         <button
             @click="$refs.wordValidator.submitWord()"
@@ -65,6 +66,9 @@ export default {
             this.$refs.wordValidator.removeTile(rowIndex, colIndex);
             this.$refs.grid.clearCell(tileData);
         },
+        gameOver() {
+            this.$refs.upTimer.stopTimer();
+        }
     }
 }
 </script>
