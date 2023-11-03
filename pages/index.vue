@@ -1,11 +1,10 @@
 <template>
   <div
-      class="flex flex-col items-center justify-center"
+      class="flex flex-col items-center justify-center h-screen space-y-6"
   >
-      <h1>Welcome to My Game Collection</h1>
-      <!-- Create buttons to link to different game pages -->
       <nuxt-link to="/codenames">Codenames</nuxt-link>
       <nuxt-link to="/wordrift">Wordrift</nuxt-link>
+      <nuxt-link to="/grogGames">Grog Games</nuxt-link>
   </div>
 </template>
 <script>
