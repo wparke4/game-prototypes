@@ -1,14 +1,25 @@
 <template>
     <div
-        class="flex flex-col items-center justify-center h-screen"
+        class="flex flex-col w-full items-center justify-between h-screen space-y-"
     >
-        <div class="prompt">
-          <p>{{ currentPrompt.text }}</p>
-          <p class="type">{{ currentPrompt.type }}</p>
+        <div
+        >
+            <p class="pt-8">{{ currentPrompt.type }}</p>
         </div>
-        <button @click="loadNextPrompt">
-            Next Prompt
-        </button>
+        <div
+            class="text-center"
+        >
+            <p class="text-3xl pb-7">{{ currentPrompt.text }}</p>
+            <p class="text-lg">{{ currentPrompt.results }}</p>
+        </div>
+        <div>
+            <button
+                @click="loadNextPrompt"
+                class="p-10px"
+              >
+                Next Prompt
+            </button>
+        </div>
     </div>
 </template>
 
@@ -28,7 +39,7 @@ export default {
   },
   computed: {
     currentPrompt() {
-      return this.prompts.length ? this.prompts[this.currentPromptIndex] : { text: '', type: '' };
+      return this.prompts.length ? this.prompts[this.currentPromptIndex] : { results: '', text: '', type: '' };
     }
   },
   methods: {

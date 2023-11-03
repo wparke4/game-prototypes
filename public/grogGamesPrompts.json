@@ -1,10 +1,237 @@
 [
   {
-    "text": "Type your name backwards",
-    "type": "group challenge"
+    "text": "Everyone, turn off your cameras!",
+    "results": "Last player drinks",
+    "type": "Group Challenge"
   },
   {
-    "text": "Stand on one leg for the next round",
-    "type": "individual challenge"
-  }
+    "text": "Everyone, mute your mic!",
+    "results": "Last player drinks",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone, write your name backwards in the chat!",
+    "results": "Last player drinks",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone, submit a funny meme in the chat!",
+    "results": "Last player drinks. Pick the worst meme, player who submitted it drinks twice.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone, stand up and face away from the camera!",
+    "results": "Last player drinks",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone, type the day of the month in the chat!",
+    "results": "Last player drinks. Anyone who was incorrect drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone, post a link for 6 finger gloves in the chat.",
+    "results": "First submission wins. Everyone else drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone, in the chat post a link for a shirt for sale with at least 3 unicorns on it.",
+    "results": "First submission wins. Everyone else drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone, in the chat post a link for a coffee mug with brass knuckles as the handle.",
+    "results": "First submission wins. Everyone else drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "On the count of 3, everyone type the name of a body part in the chat.",
+    "results": "Players who submitted the most common answer are safe. Everyone else drink.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone, in the chat post a link for a bobble head of Pee-Wee Herman.",
+    "results": "First submission wins. Everyone else drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone, in the chat post a link for a Bill Cosby Fan Group.",
+    "results": "First submission wins. Everyone else drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone, in the chat post a link of a someone dancing to Mambo #5.",
+    "results": "First submission wins. Everyone else can either drink or listen to 30 seconds of the song.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Starting with you and going clockwise, sing YMCA 1 word at a time.",
+    "results": "First player to mess up drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Starting with you and going clockwise, say the alphabet backwards.",
+    "results": "First player to mess up drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Starting with you and going clockwise, starting with the number 1 and going up, say the next prime number.",
+    "results": "First player to mess up drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Starting with you and going clockwise, multiply 2 by itself. Next player multiplies that number by 2 and so on.",
+    "results": "First player to mess up drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Starting with you and going clockwise, say a compliment to the person next to you.",
+    "results": "First player to smile drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Starting with you and going clockwise, say words that rhyme with 'orange'.",
+    "results": "First player to say doorhinge drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Starting with you and going clockwise, say European Countries.",
+    "results": "First player to say mess up drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "On the count of 3, type the name of a player in this game.",
+    "results": "Drink once for every person who submitted the same name as you.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "On the count of 3, type the name of a player in this game.",
+    "results": "Drink if you're a loser and no one wrote your name.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone has 30 seconds to retrieve a red object.",
+    "results": "Drink if you fail.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone has 30 seconds to retrieve blade of grass.",
+    "results": "Drink if you fail.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone has 30 seconds to retrieve a picture of a dog.",
+    "results": "Drink if you fail.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone has 30 seconds to retrieve an object of your choice.",
+    "results": "Drink if you fail.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone has 15 seconds to get on a phone call with someone else in this game.",
+    "results": "Drink if you fail.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Create any rule you want.",
+    "results": "",
+    "type": "Create a Rule"
+  },
+  {
+    "text": "Create any rule you want.",
+    "results": "",
+    "type": "Create a Rule"
+  },
+  {
+    "text": "Create any rule you want.",
+    "results": "",
+    "type": "Create a Rule"
+  },
+  {
+    "text": "Bluff Card: play it cool, make a challenge, rule, or anything you want.",
+    "results": "If someone calls bullshit, finish your drink",
+    "type": "Bluff Card"
+  },
+  {
+    "text": "Bluff Card: play it cool, make a challenge, rule, or anything you want.",
+    "results": "If someone calls bullshit, finish your drink",
+    "type": "Bluff Card"
+  },
+  {
+    "text": "Bluff Card: play it cool, make a challenge, rule, or anything you want.",
+    "results": "If someone calls bullshit, finish your drink",
+    "type": "Bluff Card"
+  },
+  {
+    "text": "Bluff Card: play it cool, make a challenge, rule, or anything you want.",
+    "results": "If someone calls bullshit, finish your drink",
+    "type": "Bluff Card"
+  },
+  {
+    "text": "Pick a battle partner. On the count of 3, you will each say a number between 1 and 5. If you say the same number, you finish your drink. If your numbers are within 1 of eachother, they finish their drink.",
+    "results": "",
+    "type": "Battle Challenge"
+  },
+  {
+    "text": "Pick a battle partner. On the count of 3, you will each say a number between 1 and 5. If you say the same number, you finish your drink. If your numbers are within 1 of eachother, they finish their drink.",
+    "results": "",
+    "type": "Battle Challenge"
+  },
+  {
+    "text": "Pick a battle partner. On the count of 3, you will each say a number between 1 and 5. If you say the same number, you finish your drink. If your numbers are within 1 of eachother, they finish their drink.",
+    "results": "",
+    "type": "Battle Challenge"
+  },
+  {
+    "text": "The player of your choosing must finish every sentence they type with the phrase or word of your choosing",
+    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to",
+    "type": "Curse"
+  },
+  {
+    "text": "The player of your choosing must finish every sentence they say with the phrase or word of your choosing",
+    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to",
+    "type": "Curse"
+  },
+  {
+    "text": "The player of your choosing must bow and say 'thank you for joining me' before every drink they take",
+    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to",
+    "type": "Curse"
+  },
+  {
+    "text": "The player of your choosing must start every spoken sentence with 'What is...'",
+    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to",
+    "type": "Curse"
+  },
+  {
+    "text": "The player of your choosing must only speak in questions.",
+    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to",
+    "type": "Curse"
+  },
+  {
+    "text": "Both players next to me drink.",
+    "results": "",
+    "type": "Command"
+  },
+  {
+    "text": "If your first name is longer than 5 letters, drink.",
+    "results": "",
+    "type": "Command"
+  },
+  {
+    "text": "If your first name is longer than 5 letters, drink.",
+    "results": "",
+    "type": "Command"
+  },
+  {
+    "text": "If your favorite color is red or blue, raise your hand.",
+    "results": "These players must drink.",
+    "type": "Command"
+  },
+  {
+    "text": "Think of a number 1 - 3. Raise your hand if you thought of number 1.",
+    "results": "These players are safe. Everyone else drink.",
+    "type": "Command"
+  },
 ]
