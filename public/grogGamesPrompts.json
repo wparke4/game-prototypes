@@ -35,12 +35,17 @@
     "type": "Group Challenge"
   },
   {
-    "text": "Everyone, in the chat post a link for a shirt for sale with at least 3 unicorns on it.",
+    "text": "Everyone, in the chat post a link of a shirt for sale with at least 3 unicorns on it.",
     "results": "First submission wins. Everyone else drinks.",
     "type": "Group Challenge"
   },
   {
-    "text": "Everyone, in the chat post a link for a coffee mug with brass knuckles as the handle.",
+    "text": "Everyone, in the chat post a link for something that costs exactly 99 mexican pesos.",
+    "results": "First submission wins. Everyone else drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Everyone, in the chat post a link of a coffee mug with brass knuckles as the handle.",
     "results": "First submission wins. Everyone else drinks.",
     "type": "Group Challenge"
   },
@@ -52,6 +57,21 @@
   {
     "text": "Everyone, in the chat post a link for a bobble head of Pee-Wee Herman.",
     "results": "First submission wins. Everyone else drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Do not verbally announce this challenge. In the chat, post 'Last player to say hi in chat drinks'.",
+    "results": "",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Do not verbally announce this challenge. In the chat, post 'marco'.",
+    "results": "Last player to respond with 'polo' drinks.",
+    "type": "Group Challenge"
+  },
+  {
+    "text": "Mute your mic. Start talking until someone tells you that your mic is muted.",
+    "results": "That player must drink",
     "type": "Group Challenge"
   },
   {
@@ -185,37 +205,32 @@
     "type": "Battle Challenge"
   },
   {
-    "text": "The player of your choosing must finish every sentence they type with the phrase or word of your choosing.",
+    "text": "Pick a player. They must finish every sentence they type with the phrase or word of your choosing.",
     "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to.",
     "type": "Curse"
   },
   {
-    "text": "The player of your choosing must finish every sentence they say with the phrase or word of your choosing.",
+    "text": "Pick a player. They must finish every sentence they say with the phrase or word of your choosing.",
     "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to.",
     "type": "Curse"
   },
   {
-    "text": "The player of your choosing must bow and say 'thank you for joining me' before every drink they take.",
+    "text": "Pick a player. They must bow and say 'thank you for joining me' before every drink they take.",
     "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to.",
     "type": "Curse"
   },
   {
-    "text": "The player of your choosing must start every spoken sentence with 'What is...'.",
+    "text": "Pick a player. They must start every spoken sentence with 'What is...'.",
     "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to.",
     "type": "Curse"
   },
   {
-    "text": "The player of your choosing must only speak in questions.",
+    "text": "Pick a player. They must now only speak in questions.",
     "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to.",
     "type": "Curse"
   },
   {
     "text": "Both players next to me drink.",
-    "results": "",
-    "type": "Command"
-  },
-  {
-    "text": "If your first name is longer than 5 letters, drink.",
     "results": "",
     "type": "Command"
   },

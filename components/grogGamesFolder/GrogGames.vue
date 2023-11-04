@@ -7,18 +7,14 @@
             <p class="pt-8">{{ currentPrompt.type }}</p>
         </div>
         <div
-            class="text-center"
+            class="text-left w-3/4"
+            @click="loadNextPrompt"
         >
-            <p class="text-3xl pb-7">{{ currentPrompt.text }}</p>
+            <p class="text-2xl pb-7">{{ currentPrompt.text }}</p>
             <p class="text-lg">{{ currentPrompt.results }}</p>
         </div>
         <div>
-            <button
-                @click="loadNextPrompt"
-                class="p-10px"
-              >
-                Next Prompt
-            </button>
+
         </div>
     </div>
 </template>
