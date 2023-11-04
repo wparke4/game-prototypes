@@ -16,7 +16,7 @@
   },
   {
     "text": "Everyone, submit a funny meme in the chat!",
-    "results": "Last player drinks. Pick the worst meme, player who submitted it drinks twice.",
+    "results": "Last player drinks. Pick the worst submission, that player drinks twice.",
     "type": "Group Challenge"
   },
   {
@@ -60,7 +60,7 @@
     "type": "Group Challenge"
   },
   {
-    "text": "Everyone, in the chat post a link of a someone dancing to Mambo #5.",
+    "text": "Everyone, in the chat post a link of someone dancing to Mambo #5.",
     "results": "First submission wins. Everyone else can either drink or listen to 30 seconds of the song.",
     "type": "Group Challenge"
   },
@@ -70,12 +70,12 @@
     "type": "Group Challenge"
   },
   {
-    "text": "Starting with you and going clockwise, say the alphabet backwards.",
+    "text": "Starting with you and going clockwise, say the next letter in the alphabet backwards.",
     "results": "First player to mess up drinks.",
     "type": "Group Challenge"
   },
   {
-    "text": "Starting with you and going clockwise, starting with the number 1 and going up, say the next prime number.",
+    "text": "Starting with you and going clockwise, say the next prime number starting with the number 1 and going up.",
     "results": "First player to mess up drinks.",
     "type": "Group Challenge"
   },
@@ -86,16 +86,16 @@
   },
   {
     "text": "Starting with you and going clockwise, say a compliment to the person next to you.",
-    "results": "First player to smile drinks.",
+    "results": "Secret: First player to smile drinks.",
     "type": "Group Challenge"
   },
   {
-    "text": "Starting with you and going clockwise, say words that rhyme with 'orange'.",
-    "results": "First player to say doorhinge drinks.",
+    "text": "Starting with the person to your left, say a word that rhymes with 'orange'.",
+    "results": "Secret: First player to say doorhinge drinks.",
     "type": "Group Challenge"
   },
   {
-    "text": "Starting with you and going clockwise, say European Countries.",
+    "text": "Starting with you and going clockwise, say a European Country.",
     "results": "First player to say mess up drinks.",
     "type": "Group Challenge"
   },
@@ -110,12 +110,12 @@
     "type": "Group Challenge"
   },
   {
-    "text": "Everyone has 30 seconds to retrieve a red object.",
+    "text": "Name an object. Everyone has 30 seconds to retrieve it.",
     "results": "Drink if you fail.",
     "type": "Group Challenge"
   },
   {
-    "text": "Everyone has 30 seconds to retrieve blade of grass.",
+    "text": "Everyone has 60 seconds to retrieve blade of grass.",
     "results": "Drink if you fail.",
     "type": "Group Challenge"
   },
@@ -130,7 +130,7 @@
     "type": "Group Challenge"
   },
   {
-    "text": "Everyone has 15 seconds to get on a phone call with someone else in this game.",
+    "text": "Everyone has 20 seconds to get on a phone call with someone else in this game.",
     "results": "Drink if you fail.",
     "type": "Group Challenge"
   },
@@ -150,27 +150,27 @@
     "type": "Create a Rule"
   },
   {
-    "text": "Bluff Card: play it cool, make a challenge, rule, or anything you want.",
+    "text": "Bluff Card - play it cool, make a challenge, rule, or anything you want.",
     "results": "If someone calls bullshit, finish your drink",
     "type": "Bluff Card"
   },
   {
-    "text": "Bluff Card: play it cool, make a challenge, rule, or anything you want.",
+    "text": "Bluff Card - play it cool, make a challenge, rule, or anything you want.",
     "results": "If someone calls bullshit, finish your drink",
     "type": "Bluff Card"
   },
   {
-    "text": "Bluff Card: play it cool, make a challenge, rule, or anything you want.",
+    "text": "Bluff Card - play it cool, make a challenge, rule, or anything you want.",
     "results": "If someone calls bullshit, finish your drink",
     "type": "Bluff Card"
   },
   {
-    "text": "Bluff Card: play it cool, make a challenge, rule, or anything you want.",
+    "text": "Bluff Card - play it cool, make a challenge, rule, or anything you want.",
     "results": "If someone calls bullshit, finish your drink",
     "type": "Bluff Card"
   },
   {
-    "text": "Pick a battle partner. On the count of 3, you will each say a number between 1 and 5. If you say the same number, you finish your drink. If your numbers are within 1 of eachother, they finish their drink.",
+    "text": "Pick a battle partner. On the count of 3, you will each say a number between 1 and 5. If you say the same number, you finish your drink. If your numbers are within 1 of eachother, your battle partner must finish their drink.",
     "results": "",
     "type": "Battle Challenge"
   },
@@ -185,28 +185,28 @@
     "type": "Battle Challenge"
   },
   {
-    "text": "The player of your choosing must finish every sentence they type with the phrase or word of your choosing",
-    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to",
+    "text": "The player of your choosing must finish every sentence they type with the phrase or word of your choosing.",
+    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to.",
     "type": "Curse"
   },
   {
-    "text": "The player of your choosing must finish every sentence they say with the phrase or word of your choosing",
-    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to",
+    "text": "The player of your choosing must finish every sentence they say with the phrase or word of your choosing.",
+    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to.",
     "type": "Curse"
   },
   {
-    "text": "The player of your choosing must bow and say 'thank you for joining me' before every drink they take",
-    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to",
+    "text": "The player of your choosing must bow and say 'thank you for joining me' before every drink they take.",
+    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to.",
     "type": "Curse"
   },
   {
-    "text": "The player of your choosing must start every spoken sentence with 'What is...'",
-    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to",
+    "text": "The player of your choosing must start every spoken sentence with 'What is...'.",
+    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to.",
     "type": "Curse"
   },
   {
     "text": "The player of your choosing must only speak in questions.",
-    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to",
+    "results": "If they fail, they must finish their drink. Then, they select a player to pass the curse to.",
     "type": "Curse"
   },
   {
@@ -234,4 +234,19 @@
     "results": "These players are safe. Everyone else drink.",
     "type": "Command"
   },
+  {
+    "text": "Raise your hand if you haven't drank in the last 3 turns.",
+    "results": "These players must drink",
+    "type": "Command"
+  },
+  {
+    "text": "Raise your hand if you drank last turn.",
+    "results": "These players are safe, everyone else must drink.",
+    "type": "Command"
+  },
+  {
+    "text": "Raise your hand if you're feeling sassy.",
+    "results": "Cool... next turn.",
+    "type": "Command"
+  }
 ]
