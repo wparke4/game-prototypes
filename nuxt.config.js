@@ -20,7 +20,10 @@ export default defineNuxtConfig({
       ],
     },
   },
-
+  supabase: {
+    serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    redirect: false,
+  },
   runtimeConfig: {
     public: {
       nodeEnv: process.env.ENV || "production",
@@ -61,7 +64,7 @@ export default defineNuxtConfig({
   modules: [
     "@nuxtjs/tailwindcss",
     //"@nuxtjs/color-mode",
-    //"@nuxtjs/supabase",
+    "@nuxtjs/supabase",
     "@vueuse/nuxt",
     "@vueuse/motion/nuxt",
   ],

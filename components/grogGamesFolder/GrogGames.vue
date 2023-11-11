@@ -1,6 +1,7 @@
 <template>
     <div
         class="flex flex-col w-full items-center justify-between h-screen space-y-"
+        @click="loadNextPrompt"
     >
         <div
         >
@@ -8,7 +9,6 @@
         </div>
         <div
             class="text-left w-3/4"
-            @click="loadNextPrompt"
         >
             <p class="text-2xl pb-7">{{ currentPrompt.text }}</p>
             <p class="text-lg">{{ currentPrompt.results }}</p>
