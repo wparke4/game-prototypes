@@ -20,4 +20,7 @@
       GrogGamesDb,
     },
   };
+    definePageMeta({
+        middleware: ['auth'],
+    })
   </script>

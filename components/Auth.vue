@@ -13,7 +13,7 @@
           <input
             v-if="!emailSent"
             ref="input"
-            class="input input-lg w-full text-left"
+            class="input input-lg w-full text-left text-black"
             type="email"
             placeholder="Your email"
             v-model="email"
@@ -24,7 +24,7 @@
           <input
             v-else
             ref="input"
-            class="input input-lg w-full text-center"
+            class="input input-lg w-full text-center text-black"
             type="text"
             placeholder="Login Code"
             v-model="otpCode"
