@@ -1,26 +1,29 @@
 <template>
     <div>
-      <GrogGamesDb />
+        <Header />
+        <GrogGamesDb />
     </div>
-  </template>
+</template>
 
-  <script setup>
+<script setup>
 
-  import { ref } from 'vue';
-  import GrogGamesDb from "@/components/grogGamesFolder/GrogGamesDb.vue";
+import { ref } from 'vue';
+import GrogGamesDb from "@/components/grogGamesFolder/GrogGamesDb.vue";
+import Header from "@/components/Header.vue";
 
-  const loading = ref(false);
-  </script>
+const loading = ref(false);
+</script>
 
-  <style lang="postcss" scoped></style>
+<style lang="postcss" scoped></style>
 
-  <script>
-  export default {
-    components: {
-      GrogGamesDb,
-    },
-  };
-    definePageMeta({
-        middleware: ['auth'],
-    })
-  </script>
+<script>
+export default {
+components: {
+    GrogGamesDb,
+    Header
+},
+};
+definePageMeta({
+    middleware: ['auth'],
+})
+</script>

@@ -49,9 +49,9 @@ const showAccount = useState("showAccount");
 const loading = ref(false);
 const username = useState("username");
 const usernameTemp = ref(username.value);
+
 const avatar = useState("avatar");
 const avatarPath = useState("avatarPath");
-
 // Focus the input element on load
 const input = ref();
 const { focused } = useFocus(input, { initialValue: true });

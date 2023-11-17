@@ -127,7 +127,7 @@ html {
     }
 
     &.btn-success {
-      @apply border-lime-500 text-lime-500 hover:bg-lime-900 hover:bg-opacity-20;
+      @apply border-blue-400 text-white hover:bg-blue-600 hover:bg-opacity-20;
     }
 
     &.btn-full {

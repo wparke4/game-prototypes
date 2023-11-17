@@ -1,13 +1,18 @@
 <template>
-    <Prompts v-bind="gameStarted" />
+    <Prompts />
 </template>
 
 
 
 
 <script setup>
-import { ref } from 'vue';
-const gameStarted = useState(false);
+import Prompts from "@/components/grogGamesFolder/Prompts.vue";
+
+const gameStarted = useState("gameStarted", () => false);
+gameStarted.value = false;
+
+
+//const gameStarted = useState("gameStarted", () => false);
 
 </script>
 <style scoped>
