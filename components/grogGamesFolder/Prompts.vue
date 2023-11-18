@@ -1,13 +1,13 @@
 <template>
     <div
         class="flex flex-col w-full items-center justify-between h-screen space-y-"
-        v-if="gameStarted"
+        v-if="yourTurn"
     >
         {{ prompts[0]?.text }}
     </div>
     <div
         class="flex flex-col w-full items-center justify-between h-screen space-y-"
-        v-else
+        v-else-if="opponentTurn"
     >
         {{ currentPlayer }}
     </div>
@@ -19,9 +19,18 @@
 <script setup>
 const supabase = useSupabaseClient();
 const gameStarted = useState("gameStarted");
+const currentPlayer = useState("currentPlayer")
+const yourTurn = useState("yourTurn")
+const opponentTurn = useState("opponentTurn")
 
 const prompts = ref([]);
-const currentPlayer = ref('current player')
+
+const updateTurn = () => {
+    //check for player turn
+    //compare the current turn player ID against your own ID
+    //if they match, set yourTurn to true
+    //if they don't match, set opponentTurn to true
+}
 
 const fetchPrompts = async () => {
     const { data, error } = await supabase

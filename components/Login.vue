@@ -108,6 +108,26 @@
     }
   };
 
+
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    // console.log(event, session);
+    if (event == "SIGNED_IN") {
+      loading.value = true;
+      //user.value = session.user;
+
+      setTimeout(async () => {
+        //await getUserProfile();
+        // If we have a redirect, go there first before loading the profile
+        if (route.query.redirect) {
+          router.push({ path: route.query.redirect });
+        } else {
+            router.push({ path: "" });
+        }
+      }, 500);
+    }
+  });
+
+
   const buttonText = computed(() => {
     if (loading.value) return "Loading...";
     if (emailSent.value) return "Submit Code";

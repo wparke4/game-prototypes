@@ -62,7 +62,7 @@
       //user.value = session.user;
 
       setTimeout(async () => {
-        await getUserProfile();
+        //await getUserProfile();
         // If we have a redirect, go there first before loading the profile
         if (route.query.redirect) {
           router.push({ path: route.query.redirect });
