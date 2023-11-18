@@ -56,6 +56,8 @@
 
 <script setup>
 const supabase = useSupabaseClient();
+let user = useSupabaseUser();
+
 const gameStarted = useState("gameStarted");
 const currentPlayer = useState("currentPlayer")
 const yourTurn = useState("yourTurn")
@@ -65,6 +67,7 @@ const gameCode = ref("");
 const gameId = useState("gameId");
 const tempGameId = ref("");
 const isGameHost = useState("isGameHost")
+const userId = ref("")
 
 const prompts = ref([]);
 
@@ -82,7 +85,7 @@ const startGame = () => {
 
 const createGame = () => {
     createGameId();
-    createGameRow();
+    checkGameId();
     fetchAllPrompts();
     selectPrompts();
     insertPrompts();
@@ -91,7 +94,34 @@ const createGame = () => {
 };
 
 const createGameId = () => {
-    //randomly generate a 3 number code
+    //pull last game ID and create a new one
+    tempGameId.value = 1
+}
+
+const checkGameId = async () => {
+    console.log("user id is ", user.value.id)
+    //we are setting the data retuned equal to grogGameManager
+    let { data: gameInstance, error } = await supabase
+        .from('grogGameManager')
+        .select('*')
+        .eq('id', 4)
+        .single()
+
+        if(error) {
+            console.log(error.message)
+        }
+
+    if(!gameInstance) {
+        const { error } = await supabase
+            .from('grogGameManager')
+            .insert([{ id: 4, host: user.value.id }])
+
+        if (error) {
+            console.log(error.message)
+        } else {
+            console.log("row with id 3 created")
+        }
+    }
 }
 
 const createGameRow = () => {
@@ -99,6 +129,7 @@ const createGameRow = () => {
         //if exists, return and call createGameId again
         //if doesn't exist, create new game with this code.
             //set gameId to this Id.
+
 }
 
 const fetchAllPrompts = () => {
