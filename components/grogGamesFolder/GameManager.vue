@@ -31,10 +31,13 @@
                 class="flex flex-col w-full items-center justify-center text-2xl gap-3"
             >
                 Join Game
+                <p v-if="gameNotFound" class="text-sm pb-2 text-gray-600">
+                    Game with code {{ tempGameId }} does not exist. Please try again.
+                </p>
                 <input
                     class="input input-md w-1/2 text-left text-black border-warmgray-400"
                     placeholder="Enter Code"
-                    v-model="gameCode"
+                    v-model="tempGameId"
                     @keyup.enter="joinGame()"
                     @input="emailSent = false"
                     :disabled="loading"
@@ -64,12 +67,13 @@ const yourTurn = useState("yourTurn")
 const opponentTurn = useState("opponentTurn")
 const waitingToStart = ref(false);
 const gameCode = ref("");
+const tempGameId = ref("");
 const gameId = useState("gameId");
-const tempGameId = ref(0);
 const isGameHost = useState("isGameHost")
 const userId = ref("")
 const isUniqueCode = ref(false)
-const callLimit = ref(5)
+const gameExists = ref(false)
+const gameNotFound = ref(false)
 
 const prompts = ref([]);
 
@@ -87,16 +91,16 @@ const startGame = () => {
 
 const createGame = () => {
     createGameId();
-    checkGameId().then(() => {
+    checkGameId().then(async () => {
         if (isUniqueCode.value == true) {
-            createGameRow();
-            fetchAllPrompts();
-            selectPrompts();
-            insertPrompts();
+            await createGameRow()
+            await addUserToGame()
+            await fetchAllPrompts();
+            await selectPrompts();
+            await insertPrompts();
             waitingToStart.value = true
             isGameHost.value = true
-        } else if (callLimit.value > 0) {
-            callLimit.value -= 1
+        } else {
             return createGame();
         }
 
@@ -140,12 +144,84 @@ const createGameRow = async () => {
             console.log(error.message)
         } else {
             console.log("row with id ", tempGameId.value, " created")
+            gameId.value = tempGameId.value
         }
-    //check if game with this code already exists in game table
-        //if exists, return and call createGameId again
-        //if doesn't exist, create new game with this code.
-            //set gameId to this Id.
 
+}
+
+const joinGame = async () => {
+    console.log("joinGame says tempGameId is ", tempGameId.value)
+    findGame().then(async () => {
+        if (gameExists.value == true) {
+            await addUserToGame()
+            waitingToStart.value = true
+        } else {
+            return gameNotFound.value = true;
+        }
+
+    })
+    //search for game instance with this code.
+    //if game exists, add this user to the player list for this game
+    //set "waiting for game start to true"
+}
+
+const addUserToGame = async () => {
+    console.log("addUserToGame says gameId is ", gameId.value)
+    let { data, error: fetchError } = await supabase
+        .from('grogGameManager')
+        .select('players')
+        .eq('id', gameId.value)
+        .single()
+
+    if (fetchError) {
+        console.log(fetchError)
+        return
+    }
+
+    let currentArray = data.players
+    console.log("currentArray is ", currentArray)
+
+    let updatedArray = []
+
+    if (currentArray) {
+        updatedArray = [...currentArray, user.value.id]
+    } else {
+        updatedArray = [user.value.id]
+    }
+
+    console.log("updatedArray is ", updatedArray)
+
+    const { error: updateError } = await supabase
+        .from('grogGameManager')
+        .update({ players: updatedArray })
+        .eq('id', gameId.value)
+
+    if (updateError) {
+        console.log(updateError.message)
+        return
+    } else {
+        console.log("user added to game")
+    }
+}
+
+const findGame = async () => {
+    //we are setting the data retuned equal to grogGameManager
+    let { data: gameInstance, error } = await supabase
+        .from('grogGameManager')
+        .select('*')
+        .eq('id', tempGameId.value)
+        .single()
+
+        if(error) {
+            console.log(error.message)
+        }
+
+    if(gameInstance) {
+        return gameExists.value = true
+    } else {
+        console.log("game with id of ", tempGameId.value, " does not exist")
+        return gameExists.value = false
+    }
 }
 
 const fetchAllPrompts = () => {
@@ -158,13 +234,6 @@ const selectPrompts = () => {
 
 const insertPrompts = () => {
     //insert all prompts into database for this game.
-}
-
-const joinGame = () => {
-    //search for game instance with this code.
-    //if game exists, add this user to the player list for this game
-    //set "waiting for game start to true"
-    waitingToStart.value = true
 }
 
 const fetchPrompts = async () => {
