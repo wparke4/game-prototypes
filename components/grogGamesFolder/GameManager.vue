@@ -65,9 +65,11 @@ const opponentTurn = useState("opponentTurn")
 const waitingToStart = ref(false);
 const gameCode = ref("");
 const gameId = useState("gameId");
-const tempGameId = ref("");
+const tempGameId = ref(0);
 const isGameHost = useState("isGameHost")
 const userId = ref("")
+const isUniqueCode = ref(false)
+const callLimit = ref(5)
 
 const prompts = ref([]);
 
@@ -85,46 +87,60 @@ const startGame = () => {
 
 const createGame = () => {
     createGameId();
-    checkGameId();
-    fetchAllPrompts();
-    selectPrompts();
-    insertPrompts();
-    waitingToStart.value = true
-    isGameHost.value = true
+    checkGameId().then(() => {
+        if (isUniqueCode.value == true) {
+            createGameRow();
+            fetchAllPrompts();
+            selectPrompts();
+            insertPrompts();
+            waitingToStart.value = true
+            isGameHost.value = true
+        } else if (callLimit.value > 0) {
+            callLimit.value -= 1
+            return createGame();
+        }
+
+    })
 };
 
 const createGameId = () => {
     //pull last game ID and create a new one
-    tempGameId.value = 1
+    tempGameId.value += 1
+    console.log("tempGameId is ", tempGameId.value)
 }
 
 const checkGameId = async () => {
-    console.log("user id is ", user.value.id)
     //we are setting the data retuned equal to grogGameManager
     let { data: gameInstance, error } = await supabase
         .from('grogGameManager')
         .select('*')
-        .eq('id', 4)
+        .eq('id', tempGameId.value)
         .single()
 
         if(error) {
             console.log(error.message)
         }
+    console.log('checkGameId says gameInstance is ', gameInstance)
 
     if(!gameInstance) {
-        const { error } = await supabase
+        return isUniqueCode.value = true
+    } else {
+        console.log("game with id of ", tempGameId.value, " already exists")
+        return isUniqueCode.value = false
+    }
+}
+
+const createGameRow = async () => {
+    console.log("createGameRow says tempGameId is ", tempGameId.value)
+    const { error } = await supabase
             .from('grogGameManager')
-            .insert([{ id: 4, host: user.value.id }])
+            .insert([{ id: tempGameId.value, host: user.value.id }])
 
         if (error) {
             console.log(error.message)
         } else {
-            console.log("row with id 3 created")
+            console.log("row with id ", tempGameId.value, " created")
         }
-    }
-}
-
-const createGameRow = () => {
     //check if game with this code already exists in game table
         //if exists, return and call createGameId again
         //if doesn't exist, create new game with this code.

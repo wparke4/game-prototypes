@@ -54,7 +54,7 @@
     }
   };
 
-
+/*
   supabase.auth.onAuthStateChange(async (event, session) => {
     // console.log(event, session);
     if (event == "SIGNED_IN") {
@@ -69,9 +69,10 @@
         } else {
             router.push({ path: "/" });
         }
-      }, 500);
+      }, 2000);
     }
   });
+  */
 
   // on mounted if no user, set loading to false
   onMounted(() => {
