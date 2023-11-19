@@ -1,4 +1,7 @@
 <template>
+    <div v-if="gameId">
+        Game Id is {{ gameId }}
+    </div>
     <div
         class="flex flex-col w-full items-center justify-center gap-9 h-screen space-y-"
         v-if="!gameStarted"
@@ -32,12 +35,12 @@
             >
                 Join Game
                 <p v-if="gameNotFound" class="text-sm pb-2 text-gray-600">
-                    Game with code {{ tempGameId }} does not exist. Please try again.
+                    Game with code {{ tempJoiningGameId }} does not exist. Please try again.
                 </p>
                 <input
                     class="input input-md w-1/2 text-left text-black border-warmgray-400"
                     placeholder="Enter Code"
-                    v-model="tempGameId"
+                    v-model="tempJoiningGameId"
                     @keyup.enter="joinGame()"
                     @input="emailSent = false"
                     :disabled="loading"
@@ -65,9 +68,10 @@ const gameStarted = useState("gameStarted");
 const currentPlayer = useState("currentPlayer")
 const yourTurn = useState("yourTurn")
 const opponentTurn = useState("opponentTurn")
-const waitingToStart = ref(false);
+const waitingToStart = useState("waitingToStart");
 const gameCode = ref("");
-const tempGameId = ref("");
+const tempGameId = ref(null);
+const tempJoiningGameId = ref(null);
 const gameId = useState("gameId");
 const isGameHost = useState("isGameHost")
 const userId = ref("")
@@ -150,7 +154,7 @@ const createGameRow = async () => {
 }
 
 const joinGame = async () => {
-    console.log("joinGame says tempGameId is ", tempGameId.value)
+    console.log("joinGame says tempJoiningGameId is ", tempJoiningGameId.value)
     findGame().then(async () => {
         if (gameExists.value == true) {
             await addUserToGame()
@@ -209,7 +213,7 @@ const findGame = async () => {
     let { data: gameInstance, error } = await supabase
         .from('grogGameManager')
         .select('*')
-        .eq('id', tempGameId.value)
+        .eq('id', tempJoiningGameId.value)
         .single()
 
         if(error) {
@@ -217,9 +221,10 @@ const findGame = async () => {
         }
 
     if(gameInstance) {
+        gameId.value = tempJoiningGameId.value
         return gameExists.value = true
     } else {
-        console.log("game with id of ", tempGameId.value, " does not exist")
+        console.log("game with id of ", tempJoiningGameId.value, " does not exist")
         return gameExists.value = false
     }
 }

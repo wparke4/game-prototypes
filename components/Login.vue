@@ -1,5 +1,17 @@
 <template>
     <div
+        v-if="loggedIn"
+        class="flex flex-col w-full items-center justify-center gap-9 h-screen space-y-"
+    >
+        <div v-if="promptUserToCreateProfile">
+            Create your username motherfucker
+        </div>
+        <div v-else >
+            welcome {{ username }}
+        </div>
+    </div>
+    <div
+        v-else
         class="flex flex-col w-full items-center justify-center gap-9 h-screen space-y-"
     >
         <div>
@@ -61,11 +73,17 @@
 
   <script setup>
   const supabase = useSupabaseClient();
+  let user = useSupabaseUser();
+
   const showAuth = useState("showAuth", () => false);
   const loading = ref(false);
   const emailSent = ref(false);
   const email = ref("");
   const otpCode = ref("");
+  const tempUsername = ref("");
+  const username = useState("username");
+  const promptUserToCreateProfile = ref(false)
+  const loggedIn = ref(false)
 
   // Focus the input element on load
   const input = ref();
@@ -105,8 +123,55 @@
     } finally {
       showAuth.value = false;
       loading.value = false;
+      checkForProfile()
     }
   };
+
+  const checkForProfile = async () => {
+    //check if user has a row in the profile table
+    let { data, error: fetchError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.value.id)
+        .single()
+
+    /*
+    if (fetchError) {
+        console.log(fetchError)
+        return
+    }
+    */
+    console.log("data is ", data)
+    if(!data) {
+        console.log("no profile found")
+        //create a profile for the user
+        promptUserToCreateProfile.value = true
+        loggedIn.value = true
+    } else {
+        console.log("profile found")
+        loggedIn.value = true
+    }
+    //if not, prompt them to create one
+    //check if user has a username
+    //if not, prompt them to create one
+    //if so, continue
+  }
+
+  const createProfile = async () => {
+    const { error: insertError } = await supabase
+            .from('profiles')
+            .insert([
+                { id: user.value.id, username: tempUsername.value }
+            ])
+
+        if (insertError) {
+            console.log(insertError.message)
+            return
+        } else {
+            console.log("profile created")
+            username.value = tempUsername.value
+        }
+  }
 
 
   supabase.auth.onAuthStateChange(async (event, session) => {
