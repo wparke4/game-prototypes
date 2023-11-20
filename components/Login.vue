@@ -1,13 +1,32 @@
 <template>
     <div
         v-if="loggedIn"
-        class="flex flex-col w-full items-center justify-center gap-9 h-screen space-y-"
+        class="flex flex-col w-full items-center justify-center gap-9 h-screen space-y-2"
     >
-        <div v-if="promptUserToCreateProfile">
-            Create your username motherfucker
+        <div
+            v-if="promptUserToCreateProfile"
+            class="flex flex-col w-full items-center justify-center gap-7"
+        >
+            <p class="text-xl">Create a username</p>
+            <input
+                class="input input-lg w-full text-left text-black border-warmgray-400"
+                type="text"
+                placeholder="Your username"
+                v-model="tempUsername"
+                @keyup.enter="createProfile()"
+                :disabled="loading"
+            />
+            <button
+                @click="createProfile()"
+                type="submit"
+                class="btn btn-lg btn-success btn-outline w-full"
+                :disabled="loading"
+            >
+                {{ buttonText }}
+            </button>
         </div>
-        <div v-else >
-            welcome {{ username }}
+        <div v-else class="text-2xl">
+            Welcome {{ username }}!
         </div>
     </div>
     <div
@@ -149,6 +168,7 @@
         loggedIn.value = true
     } else {
         console.log("profile found")
+        username.value = data.username
         loggedIn.value = true
     }
     //if not, prompt them to create one
@@ -170,6 +190,7 @@
         } else {
             console.log("profile created")
             username.value = tempUsername.value
+            promptUserToCreateProfile.value = false
         }
   }
 
@@ -194,6 +215,7 @@
 
 
   const buttonText = computed(() => {
+    if (promptUserToCreateProfile.value) return "Create Username";
     if (loading.value) return "Loading...";
     if (emailSent.value) return "Submit Code";
     return "Send Login Code";
