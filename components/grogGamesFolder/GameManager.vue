@@ -1,6 +1,6 @@
 <template>
     <div v-if="gameId">
-        Game Id is {{ gameId }}
+        Game ID: {{ gameId }}
     </div>
     <div
         class="flex flex-col w-full items-center justify-center gap-9 h-screen space-y-"
@@ -88,9 +88,21 @@ const updateTurn = () => {
     //if they don't match, set opponentTurn to true
 };
 
-const startGame = () => {
+const startGame = async () => {
     //call update turn
     //change "gameStarted" value in table for this game to true and broadcast to all.
+    const { error: updateError } = await supabase
+        .from('grogGameManager')
+        .update({ gameStarted: true })
+        .eq('id', gameId.value)
+
+    if (updateError) {
+        console.log(updateError.message)
+        return
+    } else {
+        console.log("game has started")
+        gameStarted.value = true
+    }
 };
 
 const createGame = () => {
