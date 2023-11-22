@@ -23,7 +23,4 @@ components: {
     Header
 },
 };
-definePageMeta({
-    middleware: ['auth'],
-})
 </script>

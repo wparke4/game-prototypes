@@ -41,7 +41,7 @@ const handleUpdates = (payload) => {
     }
     if (payload.new.players) {
         playerIds.value = payload.new.players
-        fetchUsernames()
+        checkForPlayerChange()
     }
 
     if (payload.new.turnIndex) {
@@ -51,6 +51,23 @@ const handleUpdates = (payload) => {
         players.value[payload.new.turnIndex].isCurrentPlayer = true
         console.log(players.value[payload.new.turnIndex].username + " is the current player")
         console.log(players.value[payload.new.turnIndex].isCurrentPlayer)
+    }
+}
+
+const checkForPlayerChange = () => {
+    if (playerIds.value.length > players.value.length) {
+        console.log("player added")
+        //fetch username of new player
+        //add to players array
+        fetchUsernames()
+    }
+    else if (playerIds.value.length < players.value.length) {
+        console.log("player removed")
+        //determine which player was removed
+        //remove from players array
+        fetchUsernames()
+    } else {
+        console.log("no change to players array")
     }
 }
 
