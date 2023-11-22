@@ -93,6 +93,8 @@
   <script setup>
   const supabase = useSupabaseClient();
   let user = useSupabaseUser();
+  const route = useRoute();
+    const router = useRouter();
 
   const showAuth = useState("showAuth", () => false);
   const loading = ref(false);
@@ -201,7 +203,7 @@
       loading.value = true;
       //user.value = session.user;
 
-      /*
+
       setTimeout(async () => {
         //await getUserProfile();
         // If we have a redirect, go there first before loading the profile
@@ -209,7 +211,7 @@
           router.push({ path: route.query.redirect });
         }
       }, 2000);
-      */
+
     }
   });
 

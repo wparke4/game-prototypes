@@ -1,11 +1,13 @@
 <template>
-    <div class="flex">
+    <div class="flex items-center justify-center w-full">
         <div
             v-if="waitingToStart"
             v-for="player in players"
-            class="flex items-center justify-center w-full"
+            class="w-24 border-gray-400 border-2 rounded-lg p-2 m-2 text-center"
+            id="player.id"
+            :class="{ currentPlayer: player.isCurrentPlayer }"
         >
-            {{ player }}
+            {{ player.username }}
         </div>
     </div>
 </template>
@@ -41,13 +43,18 @@ const handleUpdates = (payload) => {
         playerIds.value = payload.new.players
         fetchUsernames()
     }
+
+    if (payload.new.turnIndex) {
+        players.value.array.forEach(player => {
+            player.value.isCurrentPlayer = false
+        })
+        players.value[payload.new.turnIndex].isCurrentPlayer = true
+        console.log(players.value[payload.new.turnIndex].username + " is the current player")
+        console.log(players.value[payload.new.turnIndex].isCurrentPlayer)
+    }
 }
 
 const fetchUsernames = async () => {
-    console.log("fetchUsernames called")
-    console.log("playerIds length ", playerIds.value.length)
-    console.log("playerIds ", playerIds.value)
-    console.log("playerIds ", playerIds.value[0])
     players.value = []
     for (let i = 0; i < playerIds.value.length; i++) {
         const currentId = playerIds.value[i]
@@ -62,7 +69,7 @@ const fetchUsernames = async () => {
         }
 
         console.log("player data.username ", data[0].username)
-        players.value.push(data[0].username)
+        players.value.push( { username: data[0].username, id: playerIds.value[i], isCurrentPlayer: false } )
         console.log("players array: ", players.value)
     }
 }
@@ -75,4 +82,7 @@ supabase
 
 </script>
 <style scoped>
+.currentPlayer {
+    background-color: rgb(98, 241, 98);
+}
 </style>
