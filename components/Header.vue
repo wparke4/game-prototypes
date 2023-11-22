@@ -51,10 +51,12 @@
       cookie1.value = null;
       cookie2.value = null;
       loading.value = false;
+      router.push({ path: "/login" })
     }
   };
 
 
+  /*
   supabase.auth.onAuthStateChange(async (event, session) => {
     // console.log(event, session);
     if (event == "SIGNED_IN") {
@@ -72,6 +74,7 @@
       }, 2000);
     }
   });
+  */
 
 
   // on mounted if no user, set loading to false
