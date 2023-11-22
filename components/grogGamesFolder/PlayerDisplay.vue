@@ -36,21 +36,23 @@ const gameHost = useState("gameHost")
 const handleUpdates = (payload) => {
     console.log('Change received!', payload)
 
+    if (payload.new.turnIndex > -1) {
+        console.log("turnIndex: ", payload.new.turnIndex)
+        for(let i = 0; i < players.value.length; i++) {
+            players.value[i].isCurrentPlayer = false
+        }
+        players.value[payload.new.turnIndex].isCurrentPlayer = true
+        console.log(players.value[payload.new.turnIndex].username + " is the current player")
+        console.log(players.value[payload.new.turnIndex].isCurrentPlayer)
+
+    }
+
     if (payload.new.gameStarted) {
         gameStarted.value = true
     }
     if (payload.new.players) {
         playerIds.value = payload.new.players
         checkForPlayerChange()
-    }
-
-    if (payload.new.turnIndex) {
-        players.value.array.forEach(player => {
-            player.value.isCurrentPlayer = false
-        })
-        players.value[payload.new.turnIndex].isCurrentPlayer = true
-        console.log(players.value[payload.new.turnIndex].username + " is the current player")
-        console.log(players.value[payload.new.turnIndex].isCurrentPlayer)
     }
 }
 

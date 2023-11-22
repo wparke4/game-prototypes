@@ -93,7 +93,7 @@ const startGame = async () => {
     //change "gameStarted" value in table for this game to true and broadcast to all.
     const { error: updateError } = await supabase
         .from('grogGameManager')
-        .update({ gameStarted: true })
+        .update({ gameStarted: true, turnIndex: 0 })
         .eq('id', gameId.value)
 
     if (updateError) {
@@ -154,7 +154,7 @@ const createGameRow = async () => {
     console.log("createGameRow says tempGameId is ", tempGameId.value)
     const { error } = await supabase
             .from('grogGameManager')
-            .insert([{ id: tempGameId.value, host: user.value.id }])
+            .insert([{ id: tempGameId.value, host: user.value.id, turnIndex: -1 }])
 
         if (error) {
             console.log(error.message)
@@ -267,7 +267,20 @@ const fetchPrompts = async () => {
     prompts.value = data;
     console.log(prompts.value[0].text)
 };
+/*
+const handleUpdates = (payload) => {
+    console.log('Change received!', payload)
 
+    if (payload.new.gameStarted) {
+        gameStarted.value = true
+    }
+}
+
+supabase
+    .channel('grogGameManager')
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'grogGameManager' }, handleUpdates)
+    .subscribe()
+*/
 onMounted(() => {
 });
 </script>
