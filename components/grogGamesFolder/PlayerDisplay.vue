@@ -37,14 +37,7 @@ const handleUpdates = (payload) => {
     console.log('Change received!', payload)
 
     if (payload.new.turnIndex > -1) {
-        console.log("turnIndex: ", payload.new.turnIndex)
-        for(let i = 0; i < players.value.length; i++) {
-            players.value[i].isCurrentPlayer = false
-        }
-        players.value[payload.new.turnIndex].isCurrentPlayer = true
-        console.log(players.value[payload.new.turnIndex].username + " is the current player")
-        console.log(players.value[payload.new.turnIndex].isCurrentPlayer)
-
+        handleCurrentPlayerChange(payload)
     }
 
     if (payload.new.gameStarted) {
@@ -54,6 +47,16 @@ const handleUpdates = (payload) => {
         playerIds.value = payload.new.players
         checkForPlayerChange()
     }
+}
+
+const handleCurrentPlayerChange = (payload) => {
+    console.log("turnIndex: ", payload.new.turnIndex)
+    for(let i = 0; i < players.value.length; i++) {
+        players.value[i].isCurrentPlayer = false
+    }
+    players.value[payload.new.turnIndex].isCurrentPlayer = true
+    console.log(players.value[payload.new.turnIndex].username + " is the current player")
+    console.log(players.value[payload.new.turnIndex].isCurrentPlayer)
 }
 
 const checkForPlayerChange = () => {

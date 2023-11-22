@@ -78,6 +78,7 @@ const userId = ref("")
 const isUniqueCode = ref(false)
 const gameExists = ref(false)
 const gameNotFound = ref(false)
+const gameCreated = useState("gameCreated")
 
 const prompts = ref([]);
 
@@ -116,6 +117,7 @@ const createGame = () => {
             await insertPrompts();
             waitingToStart.value = true
             isGameHost.value = true
+            gameCreated.value = true
         } else {
             return createGame();
         }

@@ -20,8 +20,15 @@
 const supabase = useSupabaseClient();
 const gameStarted = useState("gameStarted");
 const currentPlayer = useState("currentPlayer")
+const gameCreated = useState("gameCreated")
 const yourTurn = useState("yourTurn")
 const opponentTurn = useState("opponentTurn")
+
+watch(gameCreated, (newValue, oldValue) => {
+  if (newValue === true) {
+    fetchPrompts();
+  }
+});
 
 const prompts = ref([]);
 
@@ -33,6 +40,7 @@ const updateTurn = () => {
 }
 
 const fetchPrompts = async () => {
+    console.log("fetching prompts")
     const { data, error } = await supabase
     .from('prompts')
     .select('*')
