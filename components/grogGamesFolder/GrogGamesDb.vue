@@ -2,6 +2,7 @@
     <PlayerDisplay />
     <GameManager />
     <Prompts />
+    <TurnManager />
 </template>
 
 
@@ -11,6 +12,7 @@
 import Prompts from "@/components/grogGamesFolder/Prompts.vue";
 import GameManager from "@/components/grogGamesFolder/GameManager.vue";
 import PlayerDisplay from "@/components/grogGamesFolder/PlayerDisplay.vue";
+import TurnManager from "@/components/grogGamesFolder/TurnManager.vue";
 
 const gameStarted = useState("gameStarted", () => false);
 gameStarted.value = false;

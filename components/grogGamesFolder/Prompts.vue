@@ -1,15 +1,5 @@
 <template>
-    <div
-        class="flex flex-col w-full items-center justify-between h-screen space-y-"
-        v-if="yourTurn"
-    >
-        {{ prompts[0]?.text }}
-    </div>
-    <div
-        class="flex flex-col w-full items-center justify-between h-screen space-y-"
-        v-else-if="opponentTurn"
-    >
-        {{ currentPlayer }}
+    <div>
     </div>
 </template>
 
@@ -23,14 +13,16 @@ const currentPlayer = useState("currentPlayer")
 const gameCreated = useState("gameCreated")
 const yourTurn = useState("yourTurn")
 const opponentTurn = useState("opponentTurn")
+const gameId = useState("gameId");
+const prompts = useState("prompts")
+const turnIndex = useState("turnIndex")
 
 watch(gameCreated, (newValue, oldValue) => {
   if (newValue === true) {
-    fetchPrompts();
+    //fetches all possible prompts, selects which to use then shuffles and pushes to database
+    fetchRawPrompts();
   }
 });
-
-const prompts = ref([]);
 
 const updateTurn = () => {
     //check for player turn
@@ -39,10 +31,12 @@ const updateTurn = () => {
     //if they don't match, set opponentTurn to true
 }
 
-const fetchPrompts = async () => {
-    fetchSingleUsePrompts();
-    fetchTextChallengePrompts();
-    fetchTextDatePrompts();
+const fetchRawPrompts = async () => {
+    await fetchSingleUsePrompts();
+    await fetchTextChallengePrompts();
+    await fetchTextDatePrompts();
+    shufflePrompts();
+    pushPromptsToDatabase();
 };
 
 const fetchSingleUsePrompts = async () => {
@@ -102,9 +96,39 @@ const selectRandomPrompts = (tempPrompts, promptsToSelect) => {
     }
 }
 
+const shufflePrompts = () => {
+    console.log("prompts before shuffle: ", prompts.value)
+    console.log("prompts length: ", prompts.value.length)
+    //shuffle the prompts array
+    for (let i = prompts.value.length - 1; i > 0; i--) {
+        // Generate a random index before the current element (inclusive)
+        const j = Math.floor(Math.random() * (i + 1));
+
+        let temp = prompts.value[i];
+        prompts.value[i] = prompts.value[j];
+        prompts.value[j] = temp;
+        console.log(prompts.value[i], prompts.value[j], "swapped")
+    }
+    console.log("prompts after shuffle: ", prompts.value)
+    return prompts.value;
+}
+
+const pushPromptsToDatabase = async () => {
+    const { error: updateError } = await supabase
+        .from('grogGameManager')
+        .update({ gamePrompts: prompts.value })
+        .eq('id', gameId.value)
+
+    if (updateError) {
+        console.log(updateError.message)
+        return
+    } else {
+        console.log("prompts added to game")
+    }
+}
+
 
 onMounted(() => {
-    fetchPrompts();
 });
 </script>
 <style scoped>

@@ -79,8 +79,7 @@ const isUniqueCode = ref(false)
 const gameExists = ref(false)
 const gameNotFound = ref(false)
 const gameCreated = useState("gameCreated")
-
-const prompts = ref([]);
+const prompts = useState("prompts")
 
 const updateTurn = () => {
     //check for player turn
@@ -112,9 +111,6 @@ const createGame = () => {
         if (isUniqueCode.value == true) {
             await createGameRow()
             await addUserToGame()
-            await fetchAllPrompts();
-            await selectPrompts();
-            await insertPrompts();
             waitingToStart.value = true
             isGameHost.value = true
             gameCreated.value = true
@@ -172,6 +168,7 @@ const joinGame = async () => {
     findGame().then(async () => {
         if (gameExists.value == true) {
             await addUserToGame()
+            await fetchExistingPrompts()
             waitingToStart.value = true
         } else {
             return gameNotFound.value = true;
@@ -243,16 +240,24 @@ const findGame = async () => {
     }
 }
 
-const fetchAllPrompts = () => {
+const fetchExistingPrompts = async () => {
     //fetch all prompts from database
-}
+    const { data, error } = await supabase
+        .from('grogGameManager')
+        .select('gamePrompts')
+        .eq('id', gameId.value)
 
-const selectPrompts = () => {
-    //select the prompts from each category that will be used.
-}
+    console.log("fetchExistingPrompts says data is ", data)
 
-const insertPrompts = () => {
-    //insert all prompts into database for this game.
+    if (error) {
+    console.error('Error fetching prompts:', error);
+    return;
+    }
+
+    prompts.value = data.flatMap(item => item.gamePrompts);
+
+    console.log("fetchExistingPrompts says prompts.value is ", prompts.value)
+
 }
 
 const fetchPrompts = async () => {

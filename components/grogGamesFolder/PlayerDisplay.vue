@@ -31,6 +31,8 @@ const tempGameId = ref(null);
 const gameId = useState("gameId");
 const isGameHost = useState("isGameHost")
 const gameHost = useState("gameHost")
+const turnIndex = useState("turnIndex")
+const promptIndex = useState("promptIndex")
 
 // Create a function to handle inserts
 const handleUpdates = (payload) => {
@@ -43,9 +45,18 @@ const handleUpdates = (payload) => {
     if (payload.new.gameStarted) {
         gameStarted.value = true
     }
+
     if (payload.new.players) {
         playerIds.value = payload.new.players
         checkForPlayerChange()
+    }
+
+    if (payload.new.turnIndex > -1) {
+        turnIndex.value = payload.new.turnIndex
+    }
+
+    if (payload.new.promptIndex > -1) {
+        promptIndex.value = payload.new.promptIndex
     }
 }
 
@@ -54,7 +65,22 @@ const handleCurrentPlayerChange = (payload) => {
     for(let i = 0; i < players.value.length; i++) {
         players.value[i].isCurrentPlayer = false
     }
-    players.value[payload.new.turnIndex].isCurrentPlayer = true
+    const currentPlayer = players.value[payload.new.turnIndex]
+    currentPlayer.isCurrentPlayer = true
+    console.log("currentPlaye Id: ", currentPlayer.id)
+    console.log("your id: ", user.value.id)
+    //players.value[payload.new.turnIndex].isCurrentPlayer = true
+
+
+    //check if it is the local player's turn
+    if (players.value[payload.new.turnIndex].id === user.value.id) {
+        yourTurn.value = true
+        console.log("it is your turn", yourTurn.value)
+        opponentTurn.value = false
+    } else {
+        yourTurn.value = false
+        opponentTurn.value = true
+    }
     console.log(players.value[payload.new.turnIndex].username + " is the current player")
     console.log(players.value[payload.new.turnIndex].isCurrentPlayer)
 }
