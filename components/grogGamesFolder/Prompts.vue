@@ -40,20 +40,68 @@ const updateTurn = () => {
 }
 
 const fetchPrompts = async () => {
-    console.log("fetching prompts")
+    fetchSingleUsePrompts();
+    fetchTextChallengePrompts();
+    fetchTextDatePrompts();
+};
+
+const fetchSingleUsePrompts = async () => {
     const { data, error } = await supabase
-    .from('prompts')
-    .select('*')
-    console.log(data)
+        .from('singleUsePrompts')
+        .select('*')
+    console.log("sinlge use prompts: ", data)
 
     if (error) {
-    console.error('Error fetching prompts:', error);
+    console.error('Error fetching single use prompts:', error);
     return;
     }
 
     prompts.value = data;
-    console.log(prompts.value[0].text)
-};
+}
+
+const fetchTextChallengePrompts = async () => {
+    const { data, error } = await supabase
+        .from('textChallengePrompts')
+        .select('*')
+    console.log("text challenge prompts: ", data)
+
+    if (error) {
+    console.error('Error fetching text challenge prompts:', error);
+    return;
+    }
+
+    //randomly select 5 prompts
+    selectRandomPrompts(data, 5)
+
+}
+
+const fetchTextDatePrompts = async () => {
+    const { data, error } = await supabase
+        .from('textDatePrompts')
+        .select('*')
+    console.log("text date prompts: ", data)
+
+    if (error) {
+    console.error('Error fetching text date prompts:', error);
+    return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 2)
+}
+
+const selectRandomPrompts = (tempPrompts, promptsToSelect) => {
+    //randomly select numberOfPrompts
+    //add them to the prompts array
+    for (let i = 0; i < promptsToSelect; i++) {
+        const randomIndex = Math.floor(Math.random() * tempPrompts.length);
+        prompts.value.push(tempPrompts[randomIndex]);
+        console.log("prompt added: ", tempPrompts[randomIndex])
+        //remove the prompt from the tempPrompts array
+        tempPrompts.splice(randomIndex, 1);
+    }
+}
+
 
 onMounted(() => {
     fetchPrompts();
