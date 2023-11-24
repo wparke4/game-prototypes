@@ -1,7 +1,6 @@
 <template>
     <PlayerDisplay />
     <GameManager />
-    <Prompts />
     <TurnManager />
 </template>
 
@@ -9,7 +8,6 @@
 
 
 <script setup>
-import Prompts from "@/components/grogGamesFolder/Prompts.vue";
 import GameManager from "@/components/grogGamesFolder/GameManager.vue";
 import PlayerDisplay from "@/components/grogGamesFolder/PlayerDisplay.vue";
 import TurnManager from "@/components/grogGamesFolder/TurnManager.vue";

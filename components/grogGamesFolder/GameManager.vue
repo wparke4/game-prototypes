@@ -1,6 +1,6 @@
 <template>
-    <div v-if="gameId">
-        Game ID: {{ gameId }}
+    <div v-if="game">
+        Game ID: {{ game.id }}
     </div>
     <div
         class="flex flex-col w-full items-center justify-center gap-9 h-screen space-y-"
@@ -11,7 +11,7 @@
                 v-if="isGameHost"
                 @click="startGame()"
                 type="submit"
-                class="btn btn-lg btn-success btn-outline w-full"
+                class="btn btn-lg btn-primary w-full"
             >
                 Start Game
             </button>
@@ -26,7 +26,7 @@
             <button
                 @click="createGame()"
                 type="submit"
-                class="btn btn-lg btn-success btn-outline w-full"
+                class="btn btn-lg btn-primary w-full"
             >
                 Create Game
             </button>
@@ -35,20 +35,19 @@
             >
                 Join Game
                 <p v-if="gameNotFound" class="text-sm pb-2 text-gray-600">
-                    Game with code {{ tempJoiningGameId }} does not exist. Please try again.
+                    Game with code {{ joinGameId }} does not exist. Please try again.
                 </p>
                 <input
                     class="input input-md w-1/2 text-left text-black border-warmgray-400"
                     placeholder="Enter Code"
-                    v-model="tempJoiningGameId"
+                    v-model="joinGameId"
                     @keyup.enter="joinGame()"
                     @input="emailSent = false"
-                    :disabled="loading"
                 >
                 <button
                     @click="joinGame()"
                     type="submit"
-                    class="btn btn-md btn-success btn-outline w-1/2"
+                    class="btn btn-primary w-1/2"
                 >
                     Submit
                 </button>
@@ -65,28 +64,11 @@ const supabase = useSupabaseClient();
 let user = useSupabaseUser();
 
 const gameStarted = useState("gameStarted");
-const currentPlayer = useState("currentPlayer")
-const yourTurn = useState("yourTurn")
-const opponentTurn = useState("opponentTurn")
 const waitingToStart = useState("waitingToStart");
-const gameCode = ref("");
-const tempGameId = ref(null);
-const tempJoiningGameId = ref(null);
-const gameId = useState("gameId");
-const isGameHost = useState("isGameHost")
-const userId = ref("")
-const isUniqueCode = ref(false)
-const gameExists = ref(false)
+const joinGameId = ref(null);
+const game = useState("game");
 const gameNotFound = ref(false)
-const gameCreated = useState("gameCreated")
-const prompts = useState("prompts")
-
-const updateTurn = () => {
-    //check for player turn
-    //compare the current turn player ID against your own ID
-    //if they match, set yourTurn to true
-    //if they don't match, set opponentTurn to true
-};
+const tempPrompts = useState("tempPrompts", () => []);
 
 const startGame = async () => {
     //call update turn
@@ -94,122 +76,76 @@ const startGame = async () => {
     const { error: updateError } = await supabase
         .from('grogGameManager')
         .update({ gameStarted: true, turnIndex: 0 })
-        .eq('id', gameId.value)
+        .eq('id', game.value.id)
 
     if (updateError) {
         console.log(updateError.message)
         return
-    } else {
-        console.log("game has started")
-        gameStarted.value = true
     }
 };
 
-const createGame = () => {
-    createGameId();
-    checkGameId().then(async () => {
-        if (isUniqueCode.value == true) {
-            await createGameRow()
-            await addUserToGame()
-            waitingToStart.value = true
-            isGameHost.value = true
-            gameCreated.value = true
-        } else {
-            return createGame();
-        }
+// computed value for isGameHost
+const isGameHost = computed(() => {
+    return game.value.host === user.value.id
+})
 
-    })
-};
+const createGame = async () => {
+    const { data, error } = await supabase
+        .from('grogGameManager')
+        .insert([{ host: user.value.id, players: [user.value.id] }])
+        .select();
 
-const createGameId = () => {
-    //pull last game ID and create a new one
-    tempGameId.value += 1
-    console.log("tempGameId is ", tempGameId.value)
+    if (error) {
+        console.log('Error creating game row', error.message)
+    } else {
+        game.value = data[0];
+        waitingToStart.value = true
+        setUpPrompts();
+    }
 }
 
-const checkGameId = async () => {
+const joinGame = async () => {
+    //check if game exists
+    const gameExists = await findGame()
+    console.log("gameExists is ", gameExists)
+    //if game exists, add this user to the player list for this game
+    if (gameExists) {
+        await fetchGameData()
+        await addUserToGame()
+        //fetchExistingPrompts()
+        waitingToStart.value = true
+    } else {
+        return gameNotFound.value = true;
+    }
+}
+
+const fetchGameData = async () => {
     //we are setting the data retuned equal to grogGameManager
-    let { data: gameInstance, error } = await supabase
+    let { data, error } = await supabase
         .from('grogGameManager')
         .select('*')
-        .eq('id', tempGameId.value)
+        .eq('id', joinGameId.value)
         .single()
 
         if(error) {
             console.log(error.message)
         }
-    console.log('checkGameId says gameInstance is ', gameInstance)
-
-    if(!gameInstance) {
-        return isUniqueCode.value = true
-    } else {
-        console.log("game with id of ", tempGameId.value, " already exists")
-        return isUniqueCode.value = false
-    }
-}
-
-const createGameRow = async () => {
-    console.log("createGameRow says tempGameId is ", tempGameId.value)
-    const { error } = await supabase
-            .from('grogGameManager')
-            .insert([{ id: tempGameId.value, host: user.value.id, turnIndex: -1 }])
-
-        if (error) {
-            console.log(error.message)
-        } else {
-            console.log("row with id ", tempGameId.value, " created")
-            gameId.value = tempGameId.value
-        }
-
-}
-
-const joinGame = async () => {
-    console.log("joinGame says tempJoiningGameId is ", tempJoiningGameId.value)
-    findGame().then(async () => {
-        if (gameExists.value == true) {
-            await addUserToGame()
-            await fetchExistingPrompts()
-            waitingToStart.value = true
-        } else {
-            return gameNotFound.value = true;
-        }
-
-    })
-    //search for game instance with this code.
-    //if game exists, add this user to the player list for this game
-    //set "waiting for game start to true"
+    game.value = data
 }
 
 const addUserToGame = async () => {
-    console.log("addUserToGame says gameId is ", gameId.value)
-    let { data, error: fetchError } = await supabase
-        .from('grogGameManager')
-        .select('players')
-        .eq('id', gameId.value)
-        .single()
+    //create array for existing players
+    let existingPlayers = game.value.players
+    console.log("existingPlayers is ", existingPlayers)
 
-    if (fetchError) {
-        console.log(fetchError)
-        return
-    }
-
-    let currentArray = data.players
-    console.log("currentArray is ", currentArray)
-
-    let updatedArray = []
-
-    if (currentArray) {
-        updatedArray = [...currentArray, user.value.id]
-    } else {
-        updatedArray = [user.value.id]
-    }
-
+    //add user to array
+    let updatedArray = [...existingPlayers, user.value.id]
     console.log("updatedArray is ", updatedArray)
 
     const { error: updateError } = await supabase
         .from('grogGameManager')
         .update({ players: updatedArray })
-        .eq('id', gameId.value)
+        .eq('id', game.value.id)
 
     if (updateError) {
         console.log(updateError.message)
@@ -224,70 +160,106 @@ const findGame = async () => {
     let { data: gameInstance, error } = await supabase
         .from('grogGameManager')
         .select('*')
-        .eq('id', tempJoiningGameId.value)
+        .eq('id', joinGameId.value)
         .single()
 
-        if(error) {
-            console.log(error.message)
-        }
-
-    if(gameInstance) {
-        gameId.value = tempJoiningGameId.value
-        return gameExists.value = true
+    if(error) {
+        console.log(error.message)
     } else {
-        console.log("game with id of ", tempJoiningGameId.value, " does not exist")
-        return gameExists.value = false
+        return true
     }
 }
 
-const fetchExistingPrompts = async () => {
-    //fetch all prompts from database
+const setUpPrompts = async () => {
+    //fetch all prompts types from database
+    await fetchSingleUsePrompts();
+    await fetchTextChallengePrompts();
+    await fetchTextDatePrompts();
+    shufflePrompts();
+    pushPromptsToDatabase();
+}
+
+const fetchSingleUsePrompts = async () => {
     const { data, error } = await supabase
+        .from('singleUsePrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching single use prompts:', error);
+        return;
+    }
+
+    //select all prompts
+    selectRandomPrompts(data, data.length)
+}
+
+const fetchTextChallengePrompts = async () => {
+    const { data, error } = await supabase
+        .from('textChallengePrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching text challenge prompts:', error);
+        return;
+    }
+
+    //randomly select 5 prompts
+    selectRandomPrompts(data, 5)
+
+}
+
+const fetchTextDatePrompts = async () => {
+    const { data, error } = await supabase
+        .from('textDatePrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching text date prompts:', error);
+        return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 2)
+}
+
+const selectRandomPrompts = (promptSet, promptsToSelect) => {
+    //randomly select numberOfPrompts
+    //add them to the temptPrompts array
+    for (let i = 0; i < promptsToSelect; i++) {
+        const randomIndex = Math.floor(Math.random() * promptSet.length);
+        tempPrompts.value.push(promptSet[randomIndex]);
+        //remove the prompt from the tempPrompts array
+        promptSet.splice(randomIndex, 1);
+    }
+}
+
+const shufflePrompts = () => {
+    console.log("prompts before shuffle: ", tempPrompts.value);
+    let shuffled = [...tempPrompts.value];
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    tempPrompts.value = shuffled;
+    console.log("prompts after shuffle: ", tempPrompts.value);
+    return tempPrompts.value;
+}
+
+const pushPromptsToDatabase = async () => {
+    const { error: updateError } = await supabase
         .from('grogGameManager')
-        .select('gamePrompts')
-        .eq('id', gameId.value)
+        .update({ gamePrompts: tempPrompts.value })
+        .eq('id', game.value.id)
 
-    console.log("fetchExistingPrompts says data is ", data)
-
-    if (error) {
-    console.error('Error fetching prompts:', error);
-    return;
-    }
-
-    prompts.value = data.flatMap(item => item.gamePrompts);
-
-    console.log("fetchExistingPrompts says prompts.value is ", prompts.value)
-
-}
-
-const fetchPrompts = async () => {
-    const { data, error } = await supabase
-    .from('prompts')
-    .select('*')
-    console.log(data)
-
-    if (error) {
-    console.error('Error fetching prompts:', error);
-    return;
-    }
-
-    prompts.value = data;
-    console.log(prompts.value[0].text)
-};
-/*
-const handleUpdates = (payload) => {
-    console.log('Change received!', payload)
-
-    if (payload.new.gameStarted) {
-        gameStarted.value = true
+    if (updateError) {
+        console.log(updateError.message)
+        return
+    } else {
+        console.log("prompts added to game")
     }
 }
-
-supabase
-    .channel('grogGameManager')
-    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'grogGameManager' }, handleUpdates)
-    .subscribe()
-*/
 onMounted(() => {
 });
 </script>
