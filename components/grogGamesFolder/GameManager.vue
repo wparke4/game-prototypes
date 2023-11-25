@@ -1,19 +1,45 @@
 <template>
-    <div>
-        <div v-if="game">
-            Game ID: {{ game.id }}
+        <div v-if="game" class="flex flex-col">
+            <div class="text-xs sm:text-sm pl-3 pt-2">
+                Game ID: {{ game.id }}
+            </div>
+            <div
+                class="flex items-center justify-center w-full h-20"
+            >
+                <div
+                    v-for="(player, index) in players"
+                    class="flex flex-col justify-center items-center space-y-1 text-center md:w-20 transition ease-in-out rounded-full w-12 h-12"
+                    id="player.id"
+                    :class="{ currentPlayer: player.isCurrentPlayer }"
+                    :style="{ backgroundColor: player.id === currentPlayerId ? 'rgb(128, 255, 128)' : 'white' }"
+                >
+                <div
+                    class="font-medium text-md sm:text-sm md:text-sm w-12 sm:w-auto overflow-hidden text-ellipsis"
+                >
+                    {{ player.username }}
+                </div>
+            </div>
+        </div>
         </div>
         <div
             v-if="gameStatus === 'inProgress'"
         >
             <div
                 v-if="isYourTurn"
+                class="flex flex-col w-full items-center justify-center gap-9"
             >
-                <div>
-                        {{ currentPrompt.text }}
+                <div
+                    class="text-2xl w-3/4"
+                >
+                    {{ currentPrompt.text }}
+                </div>
+                <div
+                    class="text-lg w-3/4"
+                >
+                    {{  currentPrompt.results }}
                 </div>
                 <button
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn btn-primary w-1/2 sm:w-1/4"
                     @click="endTurn"
                 >
                     End Turn
@@ -21,6 +47,7 @@
             </div>
             <div
                 v-else
+                class="flex flex-col w-full items-center justify-center text-3xl"
             >
                 {{ currentPlayerUsername }}'s turn
             </div>
@@ -32,7 +59,7 @@
         </div>
         <div
             v-else-if="gameStatus === 'notStarted'"
-            class="flex flex-col w-full items-center justify-center h-screen"
+            class="flex flex-col w-full items-center justify-center"
         >
             <button
                 v-if="isGameHost"
@@ -49,12 +76,12 @@
         </div>
         <div
             v-else
-            class="flex flex-col w-full items-center justify-center gap-9 h-screen"
+            class="flex flex-col w-full h-full items-center justify-center gap-9"
         >
             <button
                 @click="createGame()"
                 type="submit"
-                class="btn btn-lg btn-primary w-full"
+                class="btn h-20 btn-primary w-1/2"
             >
                 Create Game
             </button>
@@ -66,7 +93,7 @@
                     Game with code {{ joinGameId }} does not exist. Please try again.
                 </p>
                 <input
-                    class="input input-md w-1/2 text-left text-black border-warmgray-400"
+                    class="input input- w-1/2 text-left text-black border-warmgray-400"
                     placeholder="Enter Code"
                     v-model="joinGameId"
                     @keyup.enter="joinGame()"
@@ -81,7 +108,7 @@
                 </button>
             </div>
         </div>
-    </div>
+
 </template>
 
 
@@ -99,6 +126,7 @@ const game = useState("game");
 const gameNotFound = ref(false)
 const tempPrompts = useState("tempPrompts", () => []);
 const players = useState("players", () => []);
+const colors = ["red", "blue", "green", "yellow", "purple", "orange"];
 
 const startGame = async () => {
     //call update turn
@@ -200,6 +228,8 @@ const setUpPrompts = async () => {
     await fetchSingleUsePrompts();
     await fetchTextChallengePrompts();
     await fetchTextDatePrompts();
+    await fetchTextLinkPrompts();
+    await fetchCategoriesPrompts();
     shufflePrompts();
     pushPromptsToDatabase();
 }
@@ -236,6 +266,33 @@ const fetchTextChallengePrompts = async () => {
 const fetchTextDatePrompts = async () => {
     const { data, error } = await supabase
         .from('textDatePrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching text date prompts:', error);
+        return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 2)
+}
+const fetchTextLinkPrompts = async () => {
+    const { data, error } = await supabase
+        .from('textLinkPrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching text date prompts:', error);
+        return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 2)
+}
+
+const fetchCategoriesPrompts = async () => {
+    const { data, error } = await supabase
+        .from('rrCategoriesPrompts')
         .select('*')
 
     if (error) {
@@ -295,17 +352,28 @@ supabase
     .subscribe()
 
 const currentPlayerUsername = computed(() => {
-    let playerTurn = game.value.turnIndex % players.value.length;
-    return players.value[playerTurn].username;
+    if(game.value.gameStatus !== "notStarted") {
+        let playerTurn = game.value.turnIndex % players.value.length;
+        return players.value[playerTurn].username;
+    }
+})
+
+const currentPlayerId = computed(() => {
+    if(game.value.gameStatus !== "notStarted") {
+        let playerTurn = game.value.turnIndex % players.value.length;
+        return players.value[playerTurn].id;
+    }
 })
 
 const isYourTurn = computed(() => {
-    let playerTurn = game.value.turnIndex % players.value.length;
-    return players.value[playerTurn].id === user.value.id;
+    if(game.value.gameStatus !== "notStarted") {
+        let playerTurn = game.value.turnIndex % players.value.length;
+        return players.value[playerTurn].id === user.value.id;
+    }
 })
 
 const currentPrompt = computed(() => {
-    return game.value.gamePrompts[game.value.turnIndex]
+    return game.value?.gamePrompts[game.value.turnIndex]
 })
 
 watch(game, (newValue, oldValue) => {
