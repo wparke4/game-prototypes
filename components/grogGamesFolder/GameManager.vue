@@ -93,7 +93,6 @@ const { gameStatus } = utils();
 const supabase = useSupabaseClient();
 let user = useSupabaseUser();
 
-const gameStarted = useState("gameStarted");
 const waitingToStart = useState("waitingToStart");
 const joinGameId = ref(null);
 const game = useState("game");
@@ -295,11 +294,6 @@ supabase
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'grogGameManager' }, handleUpdates)
     .subscribe()
 
-const currentPlayerId = computed(() => {
-    let playerTurn = game.value.turnIndex % players.value.length;
-    return players.value[playerTurn].id;
-})
-
 const currentPlayerUsername = computed(() => {
     let playerTurn = game.value.turnIndex % players.value.length;
     return players.value[playerTurn].username;
@@ -350,6 +344,22 @@ const removePlayerFromPlayersArray = async () => {
         } else {
             players.value.splice(i, 1)
         }
+    }
+}
+
+const endTurn = async () => {
+
+    const turnIndex = game.value.turnIndex
+    const newTurnIndex = turnIndex + 1
+
+    const { data, error } = await supabase
+        .from('grogGameManager')
+        .update({ turnIndex: newTurnIndex })
+        .eq('id', game.value.id)
+
+    if (error) {
+        console.log(error.message)
+        return
     }
 }
 
