@@ -54,6 +54,7 @@ const gameNotFound = ref(false)
 const prompts = useState("prompts")
 const turnIndex = useState("turnIndex")
 const promptIndex = useState("promptIndex")
+const game = useState("game")
 
 const startTurn = () => {
     console.log("turnIndex.value", turnIndex.value)
@@ -63,53 +64,21 @@ const startTurn = () => {
 }
 
 const endTurn = async () => {
-    await incrementTurnIndex()
-    await incrementPromptIndex()
     turnStarted.value = false
-    yourTurn.value = false
-}
 
-const incrementTurnIndex = async () => {
-    if (turnIndex.value === players.value.length - 1) {
-        turnIndex.value = 0
-    } else {
-        turnIndex.value = turnIndex.value + 1
-    }
+    turnIndex.value = turnIndex.value + 1
+
     const { data, error } = await supabase
         .from('grogGameManager')
         .update({ turnIndex: turnIndex.value })
-        .eq('id', gameId.value)
+        .eq('id', game.value.id)
 
     if (error) {
         console.log(error.message)
         return
     }
-    console.log("turn index incremented")
 }
 
-const incrementPromptIndex = async () => {
-    promptIndex.value = promptIndex.value + 1
-
-    const { data, error } = await supabase
-        .from('grogGameManager')
-        .update({ promptIndex: promptIndex.value })
-        .eq('id', gameId.value)
-
-    if (error) {
-        console.log(error.message)
-        return
-    }
-    console.log("prompt index incremented")
-}
-
-
-
-const updateTurn = () => {
-    //check for player turn
-    //compare the current turn player ID against your own ID
-    //if they match, set yourTurn to true
-    //if they don't match, set opponentTurn to true
-};
 onMounted(() => {
 });
 </script>

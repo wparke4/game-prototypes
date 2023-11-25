@@ -6,7 +6,24 @@
         <div
             v-if="gameStatus === 'inProgress'"
         >
-            Game in progress
+            <div
+                v-if="isYourTurn"
+            >
+                <div>
+                        {{ currentPrompt.text }}
+                </div>
+                <button
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    @click="endTurn"
+                >
+                    End Turn
+                </button>
+            </div>
+            <div
+                v-else
+            >
+                {{ currentPlayerUsername }}'s turn
+            </div>
         </div>
         <div
             v-else-if="gameStatus === 'completed'"
@@ -278,13 +295,23 @@ supabase
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'grogGameManager' }, handleUpdates)
     .subscribe()
 
-const whoseTurn = computed(() => {
+const currentPlayerId = computed(() => {
     let playerTurn = game.value.turnIndex % players.value.length;
     return players.value[playerTurn].id;
 })
 
+const currentPlayerUsername = computed(() => {
+    let playerTurn = game.value.turnIndex % players.value.length;
+    return players.value[playerTurn].username;
+})
+
 const isYourTurn = computed(() => {
-    return whoseTurn.value.id === user.value.id;
+    let playerTurn = game.value.turnIndex % players.value.length;
+    return players.value[playerTurn].id === user.value.id;
+})
+
+const currentPrompt = computed(() => {
+    return game.value.gamePrompts[game.value.turnIndex]
 })
 
 watch(game, (newValue, oldValue) => {
