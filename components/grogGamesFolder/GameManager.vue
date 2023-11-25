@@ -1,12 +1,22 @@
 <template>
-    <div v-if="game">
-        Game ID: {{ game.id }}
-    </div>
-    <div
-        class="flex flex-col w-full items-center justify-center gap-9 h-screen space-y-"
-        v-if="!gameStarted"
-    >
-        <div v-if="waitingToStart" >
+    <div>
+        <div v-if="game">
+            Game ID: {{ game.id }}
+        </div>
+        <div
+            v-if="gameStatus === 'inProgress'"
+        >
+            Game in progress
+        </div>
+        <div
+            v-else-if="gameStatus === 'completed'"
+        >
+
+        </div>
+        <div
+            v-else-if="gameStatus === 'notStarted'"
+            class="flex flex-col w-full items-center justify-center h-screen"
+        >
             <button
                 v-if="isGameHost"
                 @click="startGame()"
@@ -18,10 +28,11 @@
             <div v-else >
                 Waiting for host to start game
             </div>
+
         </div>
         <div
             v-else
-            class="flex flex-col w-full items-center justify-center gap-9 h-screen space-y-"
+            class="flex flex-col w-full items-center justify-center gap-9 h-screen"
         >
             <button
                 @click="createGame()"
@@ -60,6 +71,8 @@
 
 
 <script setup>
+const { gameStatus } = utils();
+
 const supabase = useSupabaseClient();
 let user = useSupabaseUser();
 
@@ -69,13 +82,14 @@ const joinGameId = ref(null);
 const game = useState("game");
 const gameNotFound = ref(false)
 const tempPrompts = useState("tempPrompts", () => []);
+const players = useState("players", () => []);
 
 const startGame = async () => {
     //call update turn
     //change "gameStarted" value in table for this game to true and broadcast to all.
     const { error: updateError } = await supabase
         .from('grogGameManager')
-        .update({ gameStarted: true, turnIndex: 0 })
+        .update({ gameStatus: "inProgress", turnIndex: 0 })
         .eq('id', game.value.id)
 
     if (updateError) {
@@ -107,7 +121,6 @@ const createGame = async () => {
 const joinGame = async () => {
     //check if game exists
     const gameExists = await findGame()
-    console.log("gameExists is ", gameExists)
     //if game exists, add this user to the player list for this game
     if (gameExists) {
         await fetchGameData()
@@ -136,11 +149,9 @@ const fetchGameData = async () => {
 const addUserToGame = async () => {
     //create array for existing players
     let existingPlayers = game.value.players
-    console.log("existingPlayers is ", existingPlayers)
 
     //add user to array
     let updatedArray = [...existingPlayers, user.value.id]
-    console.log("updatedArray is ", updatedArray)
 
     const { error: updateError } = await supabase
         .from('grogGameManager')
@@ -150,8 +161,6 @@ const addUserToGame = async () => {
     if (updateError) {
         console.log(updateError.message)
         return
-    } else {
-        console.log("user added to game")
     }
 }
 
@@ -234,7 +243,6 @@ const selectRandomPrompts = (promptSet, promptsToSelect) => {
 }
 
 const shufflePrompts = () => {
-    console.log("prompts before shuffle: ", tempPrompts.value);
     let shuffled = [...tempPrompts.value];
 
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -243,7 +251,6 @@ const shufflePrompts = () => {
     }
 
     tempPrompts.value = shuffled;
-    console.log("prompts after shuffle: ", tempPrompts.value);
     return tempPrompts.value;
 }
 
@@ -256,10 +263,70 @@ const pushPromptsToDatabase = async () => {
     if (updateError) {
         console.log(updateError.message)
         return
-    } else {
-        console.log("prompts added to game")
     }
 }
+
+const handleUpdates = (payload) => {
+    if (payload.new.id === game.value?.id) {
+        game.value = payload.new
+    }
+ }
+
+ // Listen to updates
+supabase
+    .channel('grogGameManager')
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'grogGameManager' }, handleUpdates)
+    .subscribe()
+
+const whoseTurn = computed(() => {
+    let playerTurn = game.value.turnIndex % players.value.length;
+    return players.value[playerTurn].id;
+})
+
+const isYourTurn = computed(() => {
+    return whoseTurn.value.id === user.value.id;
+})
+
+watch(game, (newValue, oldValue) => {
+    if (newValue.players.length > players.value.length) {
+        addPlayerToPlayersArray();
+    } else if (newValue.players.length < players.value.length) {
+        removePlayerFromPlayersArray();
+    }
+}, { deep: true });
+
+const addPlayerToPlayersArray = async () => {
+    // id of the new player to add to players array
+    const newPlayerId = game.value.players[game.value.players.length - 1]
+
+    // fetch the username for that id
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', newPlayerId)
+
+    if (error) {
+        console.error('Error fetching usernames:', error);
+        return;
+    }
+
+    // push the username and id to players.value
+    players.value.push( { username: data[0].username, id: newPlayerId } )
+}
+
+const removePlayerFromPlayersArray = async () => {
+    // search for id of player in players array that is no longer in game.players
+    for (let i = 0; i < players.value.length; i++) {
+        const currentPlayerId = players.value[i].id
+        if (game.value.players.includes(currentPlayerId)) {
+            continue
+        } else {
+            players.value.splice(i, 1)
+        }
+    }
+}
+
+
 onMounted(() => {
 });
 </script>
