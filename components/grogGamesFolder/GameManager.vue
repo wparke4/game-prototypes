@@ -1,7 +1,15 @@
 <template>
+    <div
+        class="flex flex-col h-full"
+    >
         <div v-if="game" class="flex flex-col">
-            <div class="text-xs sm:text-sm pl-3 pt-2">
-                Game ID: {{ game.id }}
+            <div class="text-sm sm:text-sm pl-3 px-4 flex justify-between w-full">
+                <div>
+                    Game ID: {{ game.id }}
+                </div>
+                <div>
+                    Turn: {{ game.turnIndex }} / {{ game.gamePrompts.length }}
+                </div>
             </div>
             <div
                 class="flex items-center justify-center w-full h-20"
@@ -13,41 +21,42 @@
                     :class="{ currentPlayer: player.isCurrentPlayer }"
                     :style="{ backgroundColor: player.id === currentPlayerId ? 'rgb(128, 255, 128)' : 'white' }"
                 >
-                <div
-                    class="font-medium text-md sm:text-sm md:text-sm w-12 sm:w-auto overflow-hidden text-ellipsis"
-                >
-                    {{ player.username }}
+                    <div
+                        class="font-medium text-md sm:text-sm md:text-sm w-12 sm:w-auto overflow-hidden text-ellipsis"
+                    >
+                        {{ player.username }}
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
         <div
             v-if="gameStatus === 'inProgress'"
+            class="h-full"
         >
             <div
                 v-if="isYourTurn"
-                class="flex flex-col w-full items-center justify-center gap-9"
+                class="flex flex-col justify-between w-full h-full items-center pt-14"
             >
-                <div
-                    class="text-2xl w-3/4"
-                >
-                    {{ currentPrompt.text }}
+                <div class="flex flex-col justify-center items-center w-80 rounded-lg border-2 border-gray-200 p-7 shadow-md">
+                    <p class="text-2xl">
+                        {{ currentPrompt.text }}
+                    </p>
+                    <p class="text-lg pt-6">
+                        {{  currentPrompt.results }}
+                    </p>
                 </div>
-                <div
-                    class="text-lg w-3/4"
-                >
-                    {{  currentPrompt.results }}
+                <div class="w-full px-4 pb-16 flex justify-center">
+                    <button
+                        class="text-lg bg-blue-500 hover:bg-blue-700 text-white w-44 font-semibold py-2 px-4 rounded btn btn-primary mx-auto"
+                        @click="endTurn"
+                    >
+                        End Turn
+                    </button>
                 </div>
-                <button
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn btn-primary w-1/2 sm:w-1/4"
-                    @click="endTurn"
-                >
-                    End Turn
-                </button>
             </div>
             <div
                 v-else
-                class="flex flex-col w-full items-center justify-center text-3xl"
+                class="flex flex-col items-center justify-center text-3xl py-36 w-full"
             >
                 {{ currentPlayerUsername }}'s turn
             </div>
@@ -59,7 +68,7 @@
         </div>
         <div
             v-else-if="gameStatus === 'notStarted'"
-            class="flex flex-col w-full items-center justify-center"
+            class="flex flex-col w-full h-full items-center py-36"
         >
             <button
                 v-if="isGameHost"
@@ -69,8 +78,8 @@
             >
                 Start Game
             </button>
-            <div v-else >
-                Waiting for host to start game
+            <div v-else class="text-lg font-medium w-64 max-w-full">
+                Waiting for host to start game.
             </div>
 
         </div>
@@ -78,22 +87,15 @@
             v-else
             class="flex flex-col w-full h-full items-center justify-center gap-9"
         >
-            <button
-                @click="createGame()"
-                type="submit"
-                class="btn h-20 btn-primary w-1/2"
-            >
-                Create Game
-            </button>
             <div
-                class="flex flex-col w-full items-center justify-center text-2xl gap-3"
+                class="flex flex-col items-center justify-center text-2xl gap-3 p-5 rounded-lg border-2 border-gray-300 w-62"
             >
                 Join Game
                 <p v-if="gameNotFound" class="text-sm pb-2 text-gray-600">
                     Game with code {{ joinGameId }} does not exist. Please try again.
                 </p>
                 <input
-                    class="input input- w-1/2 text-left text-black border-warmgray-400"
+                    class="input input- w-52 text-left text-black border-warmgray-400"
                     placeholder="Enter Code"
                     v-model="joinGameId"
                     @keyup.enter="joinGame()"
@@ -102,13 +104,25 @@
                 <button
                     @click="joinGame()"
                     type="submit"
-                    class="btn btn-primary w-1/2"
+                    class="btn btn-primary w-52"
                 >
                     Submit
                 </button>
             </div>
+            <div
+                class="flex flex-col items-center justify-center text-2xl gap-4 p-5 rounded-lg border-2 border-gray-300 w-62"
+            >
+                Create Game
+                <button
+                    @click="createGame()"
+                    type="submit"
+                    class="btn h-20 btn-primary w-52"
+                >
+                    Create Game
+                </button>
+            </div>
         </div>
-
+    </div>
 </template>
 
 
