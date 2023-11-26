@@ -3,7 +3,7 @@
         class="flex flex-col h-full"
     >
         <div v-if="game" class="flex flex-col">
-            <div class="text-sm sm:text-sm pl-3 px-4 flex justify-between w-full">
+            <div class="text-sm sm:text-sm px-7 flex justify-between w-full">
                 <div>
                     Game ID: {{ game.id }}
                 </div>
@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div
-                class="flex items-center justify-center w-full h-20"
+                class="flex items-center justify-center w-full h-24"
             >
                 <div
                     v-for="(player, index) in players"
@@ -41,7 +41,7 @@
                     <p class="text-2xl">
                         {{ currentPrompt.text }}
                     </p>
-                    <p class="text-lg pt-6">
+                    <p class="text-lg pt-7">
                         {{  currentPrompt.results }}
                     </p>
                 </div>

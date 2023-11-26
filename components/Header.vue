@@ -1,6 +1,6 @@
 <template>
     <nav
-      class="w-full h-12 xs:h-12 sm:h-16 flex items-center justify-between relative z-30 pt-2 sm:pt-0 px-3 sm:px-6"
+      class="w-full h-12 xs:h-12 sm:h-16 flex items-center justify-between relative z-30 pt-2 sm:pt-0 px-7 sm:px-7"
     >
         <a
             @click="signOut"
