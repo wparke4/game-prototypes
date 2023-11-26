@@ -7,8 +7,8 @@
                 <div>
                     Game ID: {{ game.id }}
                 </div>
-                <div>
-                    Turn: {{ game.turnIndex }} / {{ game.gamePrompts.length }}
+                <div v-if="gameStatus === 'inProgress'">
+                    Turn: {{ game.turnIndex + 1 }} / {{ game.gamePrompts.length }}
                 </div>
             </div>
             <div
