@@ -8,7 +8,7 @@
                     Game ID: {{ game.id }}
                 </div>
                 <div v-if="gameStatus === 'inProgress'">
-                    Turn: {{ game.turnIndex + 1 }} / {{ game.gamePrompts.length }}
+                    Turn: {{ game.turnIndex + 1 }} / {{ numberOfPrompts }}
                 </div>
             </div>
             <div
@@ -30,7 +30,7 @@
             </div>
         </div>
         <div
-            v-if="gameStatus === 'inProgress'"
+            v-if="gameStatus === 'inProgress' && loading === false"
             class="h-full"
         >
             <div
@@ -76,7 +76,7 @@
                 type="submit"
                 class="btn btn-lg btn-primary w-full"
             >
-                Start Game
+                {{ loading ? 'Loading...' : 'Start Game' }}
             </button>
             <div v-else class="text-lg font-medium w-64 max-w-full">
                 Waiting for host to start game.
@@ -129,6 +129,8 @@
 
 
 <script setup>
+import { preloadPayload, useState } from 'nuxt/app';
+
 const { gameStatus } = utils();
 
 const supabase = useSupabaseClient();
@@ -141,8 +143,18 @@ const gameNotFound = ref(false)
 const tempPrompts = useState("tempPrompts", () => []);
 const players = useState("players", () => []);
 const colors = ["red", "blue", "green", "yellow", "purple", "orange"];
+/*
+const numberOfPrompts = useState("numberOfPrompts", () => 0);
+const currentPrompt = useState("currentPrompt", () => null);
+const currentPlayerUsername = useState("currentPlayerUsername", () => null);
+const currentPlayerId = useState("currentPlayerId", () => null);
+const isYourTurn = useState("isYourTurn", () => null);
+*/
+const loading = useState("loading", () => false)
+
 
 const startGame = async () => {
+    loading.value = true;
     //call update turn
     //change "gameStarted" value in table for this game to true and broadcast to all.
     const { error: updateError } = await supabase
@@ -244,6 +256,14 @@ const setUpPrompts = async () => {
     await fetchTextDatePrompts();
     await fetchTextLinkPrompts();
     await fetchCategoriesPrompts();
+    await fetchChallengesPrompts();
+    await fetchRhymePrompts();
+    await fetchScavengerPrompts();
+    await fetchCommandPrompts();
+    await fetchTrickPrompts();
+    await fetchTextUnannouncedPrompts();
+    await fetchSillyCommandPrompts();
+    await fetchCursesPrompts();
     shufflePrompts();
     pushPromptsToDatabase();
 }
@@ -318,6 +338,118 @@ const fetchCategoriesPrompts = async () => {
     selectRandomPrompts(data, 2)
 }
 
+const fetchChallengesPrompts = async () => {
+    const { data, error } = await supabase
+        .from('rrChallengesPrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching challenge  prompts:', error);
+        return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 2)
+}
+
+const fetchRhymePrompts = async () => {
+    const { data, error } = await supabase
+        .from('rrRhymePrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching rhyme  prompts:', error);
+        return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 1)
+}
+
+const fetchScavengerPrompts = async () => {
+    const { data, error } = await supabase
+        .from('scavengerHuntPrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching scavenger hunt prompts:', error);
+        return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 2)
+}
+
+const fetchCommandPrompts = async () => {
+    const { data, error } = await supabase
+        .from('commandPrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching command prompts:', error);
+        return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 7)
+}
+
+const fetchTrickPrompts = async () => {
+    const { data, error } = await supabase
+        .from('trickPrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching trick prompts:', error);
+        return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 5)
+}
+
+const fetchTextUnannouncedPrompts = async () => {
+    const { data, error } = await supabase
+        .from('textChatUnannouncedPrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching text chat unannounced prompts:', error);
+        return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 2)
+}
+
+const fetchSillyCommandPrompts = async () => {
+    const { data, error } = await supabase
+        .from('sillyCommandsPrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching silly commands prompts:', error);
+        return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 2)
+}
+
+const fetchCursesPrompts = async () => {
+    const { data, error } = await supabase
+        .from('cursePrompts')
+        .select('*')
+
+    if (error) {
+        console.error('Error fetching curse prompts:', error);
+        return;
+    }
+
+    //randomly select 2 prompts
+    selectRandomPrompts(data, 5)
+}
+
 const selectRandomPrompts = (promptSet, promptsToSelect) => {
     //randomly select numberOfPrompts
     //add them to the temptPrompts array
@@ -354,10 +486,34 @@ const pushPromptsToDatabase = async () => {
 }
 
 const handleUpdates = (payload) => {
-    if (payload.new.id === game.value?.id) {
-        game.value = payload.new
+    if (payload.new.id !== game.value?.id) {
+        return
     }
- }
+    if (payload.new.turnIndex > -1) {
+        game.value.turnIndex = payload.new.turnIndex
+    }
+    if (payload.new.gamePrompts) {
+        game.value.gamePrompts = payload.new.gamePrompts
+    }
+    if (payload.new.gameStatus) {
+        game.value.gameStatus = payload.new.gameStatus
+    }
+    if (payload.new.players) {
+        game.value.players = payload.new.players
+    }
+    if (payload.new.host) {
+        game.value.host = payload.new.host
+    }
+    loading.value = false
+    /*
+        currentPrompt.value = game.value?.gamePrompts[game.value?.turnIndex]
+        numberOfPrompts.value = game.value?.gamePrompts?.length
+        currentPlayerUsername.value = players.value[game.value?.turnIndex].username
+        currentPlayerId.value = players.value[game.value?.turnIndex].id
+        isYourTurn.value = players.value[game.value?.turnIndex].id === user.value.id
+        loading.value = false
+        */
+}
 
  // Listen to updates
 supabase
@@ -365,29 +521,39 @@ supabase
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'grogGameManager' }, handleUpdates)
     .subscribe()
 
+const currentPrompt = computed(() => {
+    return game.value?.gamePrompts[game.value?.turnIndex]
+})
+
+const numberOfPrompts = computed(() => {
+    return game.value?.gamePrompts?.length
+})
+
 const currentPlayerUsername = computed(() => {
-    if(game.value.gameStatus !== "notStarted") {
+    if (game.value.gameStatus === "notStarted") {
+        return null
+    } else {
         let playerTurn = game.value.turnIndex % players.value.length;
         return players.value[playerTurn].username;
     }
 })
 
 const currentPlayerId = computed(() => {
-    if(game.value.gameStatus !== "notStarted") {
+    if (game.value.gameStatus === "notStarted") {
+        return null
+    } else {
         let playerTurn = game.value.turnIndex % players.value.length;
         return players.value[playerTurn].id;
     }
 })
 
 const isYourTurn = computed(() => {
-    if(game.value.gameStatus !== "notStarted") {
+    if (game.value.gameStatus === "notStarted") {
+        return null
+    } else {
         let playerTurn = game.value.turnIndex % players.value.length;
         return players.value[playerTurn].id === user.value.id;
     }
-})
-
-const currentPrompt = computed(() => {
-    return game.value?.gamePrompts[game.value.turnIndex]
 })
 
 watch(game, (newValue, oldValue) => {
@@ -444,10 +610,6 @@ const endTurn = async () => {
         return
     }
 }
-
-
-onMounted(() => {
-});
 </script>
 <style scoped>
 </style>
