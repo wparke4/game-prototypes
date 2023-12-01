@@ -13,6 +13,11 @@
       >
           <nuxt-link to="/grogGamesDb">Grog Games</nuxt-link>
       </div>
+      <div
+          class="w-2/3 h-28 border-gray-500 border-2 rounded-md justify-center items-center flex"
+      >
+          <nuxt-link to="/blindMaze">Blind Maze</nuxt-link>
+      </div>
   </div>
 </template>
 <script setup>
