@@ -138,7 +138,7 @@ const startGame = async () => {
     //call update turn
     //change "gameStarted" value in table for this game to true and broadcast to all.
     const { error: updateError } = await supabase
-        .from('grogGameManager')
+        .from('blindMazeManager')
         .update({ gameStatus: "inProgress", turnIndex: 0 })
         .eq('id', game.value.id)
 
@@ -155,7 +155,7 @@ const isGameHost = computed(() => {
 
 const createGame = async () => {
     const { data, error } = await supabase
-        .from('grogGameManager')
+        .from('blindMazeManager')
         .insert([{ host: user.value.id, players: [user.value.id] }])
         .select();
 
@@ -164,7 +164,6 @@ const createGame = async () => {
     } else {
         game.value = data[0];
         waitingToStart.value = true
-        setUpPrompts();
     }
 }
 
@@ -183,9 +182,9 @@ const joinGame = async () => {
 }
 
 const fetchGameData = async () => {
-    //we are setting the data retuned equal to grogGameManager
+    //we are setting the data retuned equal to blindMazeManager
     let { data, error } = await supabase
-        .from('grogGameManager')
+        .from('blindMazeManager')
         .select('*')
         .eq('id', joinGameId.value)
         .single()
@@ -204,7 +203,7 @@ const addUserToGame = async () => {
     let updatedArray = [...existingPlayers, user.value.id]
 
     const { error: updateError } = await supabase
-        .from('grogGameManager')
+        .from('blindMazeManager')
         .update({ players: updatedArray })
         .eq('id', game.value.id)
 
@@ -215,9 +214,9 @@ const addUserToGame = async () => {
 }
 
 const findGame = async () => {
-    //we are setting the data retuned equal to grogGameManager
+    //we are setting the data retuned equal to blindMazeManager
     let { data: gameInstance, error } = await supabase
-        .from('grogGameManager')
+        .from('blindMazeManager')
         .select('*')
         .eq('id', joinGameId.value)
         .single()
@@ -253,8 +252,8 @@ const handleUpdates = (payload) => {
 
  // Listen to updates
 supabase
-    .channel('grogGameManager')
-    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'grogGameManager' }, handleUpdates)
+    .channel('blindMazeManager:*')
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'blindMazeManager' }, handleUpdates)
     .subscribe()
 
 const currentPlayerUsername = computed(() => {
@@ -329,7 +328,7 @@ const endTurn = async () => {
     const newTurnIndex = turnIndex + 1
 
     const { data, error } = await supabase
-        .from('grogGameManager')
+        .from('blindMazeManager')
         .update({ turnIndex: newTurnIndex })
         .eq('id', game.value.id)
 
