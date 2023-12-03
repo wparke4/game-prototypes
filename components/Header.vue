@@ -1,22 +1,13 @@
 <template>
-    <nav
-      class="w-full h-12 xs:h-12 sm:h-16 flex items-center justify-between relative z-30 pt-2 sm:pt-0 px-7 sm:px-7"
-    >
-        <a
-            @click="signOut"
-            class="cursor-pointer block px-4 py-2 text-sm text-gray-700"
-            role="menuitem"
-            tabindex="-1"
-            >Logout</a
-        >
-    </nav>
-    <Auth v-if="!noLogin && !user && (!loading || showAuth) && !tokenId" />
+    <a @click.prevent="signOut">Sign Out</a>
+    <Auth v-if="!user && (!loading || showAuth) && !tokenId" />
     <Account
       v-else-if="!noLogin && (showAccount || (!loading && user && !username))"
     />
   </template>
 
   <script setup>
+  //<Auth v-if="!noLogin && !user && (!loading || showAuth) && !tokenId" />
   import { vOnClickOutside } from "@vueuse/components";
   const supabase = useSupabaseClient();
   let user = useSupabaseUser();
@@ -37,7 +28,9 @@
   const tokenId = useState("tokenId", () => null);
   const noLogin = useState("noLogin");
 
-
+  const logIn = () => {
+    showAuth.value = true;
+  };
 
   const signOut = async () => {
     try {
@@ -51,7 +44,11 @@
       cookie1.value = null;
       cookie2.value = null;
       loading.value = false;
-      router.push({ path: "/login" })
+      //router.push({ path: "/login" })
+      noLogin.value = true;
+      showAuth.value = true;
+      tokenId.value = null;
+
     }
   };
 
