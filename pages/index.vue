@@ -1,5 +1,4 @@
 <template>
-    <Header />
   <div
       class="flex flex-col w-4/5 items-center justify-center h-screen space-y-6"
   >
@@ -17,6 +16,16 @@
           class="w-2/3 h-28 border-gray-500 border-2 rounded-md justify-center items-center flex"
       >
           <nuxt-link to="/blindMaze">Blind Maze</nuxt-link>
+      </div>
+      <div
+          class="w-2/3 h-28 border-gray-500 border-2 rounded-md justify-center items-center flex"
+      >
+          <nuxt-link to="/gridswap">Grid Swap</nuxt-link>
+      </div>
+      <div
+          class="w-2/3 h-28 border-gray-500 border-2 rounded-md justify-center items-center flex"
+      >
+          <nuxt-link to="/gridswapOffline">Grid Swap Offline</nuxt-link>
       </div>
   </div>
 </template>

@@ -1,13 +1,18 @@
 <template>
     <a @click.prevent="signOut">Sign Out</a>
-    <Auth v-if="!user && (!loading || showAuth) && !tokenId" />
-    <Account
-      v-else-if="!noLogin && (showAccount || (!loading && user && !username))"
-    />
+    <a
+        v-if="user && username"
+        @click.prevent="showAccount = true"
+    >
+        {{ username }}
+    </a>
+    <Auth v-if="!user" />
+    <Account v-else-if="showAccount"/>
   </template>
 
   <script setup>
   //<Auth v-if="!noLogin && !user && (!loading || showAuth) && !tokenId" />
+  //<Account v-else-if="!noLogin && (showAccount || (!loading && user && !username))"/>
   import { vOnClickOutside } from "@vueuse/components";
   const supabase = useSupabaseClient();
   let user = useSupabaseUser();

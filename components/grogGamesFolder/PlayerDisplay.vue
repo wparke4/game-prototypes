@@ -1,5 +1,7 @@
 <template>
-    <div class="flex items-center justify-center w-full">
+    <div 
+        
+        class="flex items-center justify-center w-full">
         <div
             v-if="waitingToStart"
             v-for="(player, index) in players"
@@ -20,6 +22,7 @@
 
 
 <script setup>
+const { gameStatus } = utils();
 
 const supabase = useSupabaseClient();
 let user = useSupabaseUser();

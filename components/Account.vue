@@ -1,4 +1,7 @@
 <template>
+  <div>
+    hi from account
+  </div>
   <div class="modal-bg" @click="showAccount = false">
     <div @click.stop>
       <div class="modal-header">
@@ -64,7 +67,7 @@ async function updateProfile(silent) {
     const updates = {
       id: user.value.id,
       username: usernameTemp.value,
-      avatar_url: avatarPath.value,
+      //avatar_url: avatarPath.value,
       updated_at: new Date(),
     };
     let { error } = await supabase.from("profiles").upsert(updates, {

@@ -129,7 +129,7 @@ html {
     }
 
     &.btn-success {
-      @apply border-blue-400 text-white bg-red-500 hover:bg-yellow-500 hover:bg-opacity-20;
+      @apply border-gray-400 text-white bg-gray-700 hover:bg-slate-400 hover:bg-opacity-20;
     }
 
     &.btn-full {
@@ -145,7 +145,7 @@ html {
     @apply cursor-pointer fixed right-0 left-0 bottom-0 top-0 backdrop-blur-sm bg-teal-900 bg-opacity-60 z-50 max-h-screen py-20;
 
     > div {
-      @apply absolute left-1/2 top-1/2 w-11/12 max-w-lg transform -translate-x-1/2 -translate-y-1/2 max-h-[90%] flex flex-col bg-dark bg-opacity-90 border-2 border-lime-500 rounded-xl shadow-xl space-y-4 text-center overflow-hidden;
+      @apply absolute left-1/2 top-1/2 w-11/12 max-w-lg transform -translate-x-1/2 -translate-y-1/2 max-h-[90%] flex flex-col bg-dark bg-opacity-90 border-2 border-gray-400 rounded-xl shadow-xl space-y-4 text-center overflow-hidden;
 
       .modal-header {
         @apply flex items-center justify-center uppercase font-medium py-6 text-center text-slate-500;
@@ -153,7 +153,7 @@ html {
       }
 
       .modal-content {
-        @apply flex justify-center h-full overflow-y-scroll w-full px-8;
+        @apply flex justify-center h-full w-full px-8;
 
         > div {
           @apply w-full;

@@ -6,7 +6,7 @@
       </div>
       <div class="modal-content">
         <div class="space-y-5">
-          <p v-if="emailSent" class="text-sm">
+          <p v-if="emailSent" class="text-sm text-gray-500">
             Code sent to {{ email }}.
             <a @click="emailSent = false" class="underline">Wrong one?</a>
           </p>
@@ -47,7 +47,7 @@
           v-else
           @click="verifyOtp()"
           type="submit"
-          class="btn btn-lg btn-success w-full"
+          class="btn btn-lg btn-success btn-outline w-full"
           :disabled="loading"
         >
           {{ buttonText }}
@@ -60,6 +60,7 @@
 <script setup>
 const supabase = useSupabaseClient();
 const showAuth = useState("showAuth", () => false);
+const showAccount = useState("showAccount");
 const loading = ref(false);
 const emailSent = ref(false);
 const email = ref("");
@@ -101,10 +102,12 @@ const verifyOtp = async (event) => {
   } catch (error) {
     alert(error.error_description || error.message);
   } finally {
+    //console.log("this is data from verifyOtp", data)
     showAuth.value = false;
     loading.value = false;
   }
 };
+
 
 const buttonText = computed(() => {
   if (loading.value) return "Loading...";
