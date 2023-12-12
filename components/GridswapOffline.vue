@@ -64,20 +64,74 @@ const handleKeydown = (event) => {
 }
 
 const handleMove = (rowDelta, colDelta) => {
+    const cellToCheckData = calculateNewCell(rowDelta, colDelta)
+
+    if (!cellToCheckData) {
+        return
+    }
+
+    const cellToCheck = findNewCell(cellToCheckData)
+    if (!cellToCheck) {
+        console.log("no cell in that direction")
+        return
+    }
+
+    const isHazard = hazardCheck(cellToCheck)
+    if (isHazard === true) {
+        //call function that resets the level
+        console.log("you fell in a hole and died")
+    } else if (isHazard === false) {
+        updateOccupiedCell(cellToCheck)
+    }
+}
+
+const calculateNewCell = (rowDelta, colDelta) => {
     const startingRow = occupiedCell.value.row
     const startingCol = occupiedCell.value.col
 
     const newRow = startingRow + rowDelta
     const newCol = startingCol + colDelta
 
-    console.log("occupiedCell ", occupiedCell)
-    console.log("newRow, newCol ", newRow, newCol)
+    if (newRow < 0 || newRow > rows - 1 || newCol < 0 || newCol > cols - 1) {
+        console.log("no cell in that direction exists")
+        return
+    }
+
+    return { row: newRow, col: newCol }
+}
+
+const findNewCell = (newCellData) => {
+    //const cellToCheck = grid.value[newCellData.row].col === newCellData.col
+    const cellToCheck = grid.value[newCellData.row].find(element => element.col === newCellData.col)
+
+    if (!cellToCheck) {
+        return
+    }
+
+    return cellToCheck
+}
+
+const hazardCheck = (cellToCheck) => {
+    if (cellToCheck.isHazard === true) {
+        // call function that fails level and resets
+        return true
+    } else if (cellToCheck.isHazard === false) {
+        return false
+    }
+}
+
+const updateOccupiedCell = (newCell) => {
+    for (let i = 0; i < grid.value.length; i++) {
+        const occupied = grid.value[i].find(element => element.isOccupied)
+        if (occupied) { occupied.isOccupied = false }
+    }
+
+    newCell.isOccupied = true
 }
 
 const occupiedCell = computed(() => {
     for (let i = 0; i < grid.value.length; i++) {
         const occupied = grid.value[i].find(element => element.isOccupied)
-        console.log("occupied is ", occupied)
         if (occupied) { return occupied}
     }
 })
