@@ -16,8 +16,11 @@
 
             </div>
         </div>
-        <div class="flex flex-row justify-center pt-24 text-2xl">
-            <button @click="resetPlayer()" class="button-md">Reset Level</button>
+        <div class="flex flex-col justify-center pt-12 text-xl">
+            <button @click="resetPlayer()" class="btn">
+                <p>Reset Player</p>
+                <p class="text-sm">(spacebar)</p>
+            </button>
         </div>
     </div>
 </template>
@@ -256,6 +259,9 @@ const handleKeydown = (event) => {
     case 'ArrowRight':
       // handle right arrow key
       handleMove(0, 1)
+      break;
+    case ' ':
+      resetPlayer()
       break;
   }
 }
