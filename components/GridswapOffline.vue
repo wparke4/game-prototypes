@@ -3,7 +3,7 @@
         Level {{ levelCount }}
     </div>
     <div class="flex flex-row justify-center pt-24 text-2xl">
-        <button @click="resetPlayer()" class="button-md">Reset Player</button>
+        <button @click="resetPlayer()" class="button-md">Reset Level</button>
     </div>
     <div class="flex flex-col justify-center h-screen items-center">
         <div
@@ -177,6 +177,12 @@ const moveHazard = (newCellData) => {
     setTimeout(movingHazardManager, 1000)
 }
 
+const restartMovingHazard = () => {
+    firstMovingHazardCheck = true
+    hazardIsMoving = true
+    if (!hazardIsMoving) { setTimeout(movingHazardManager, 1000) }
+}
+
 const generateRandomIndexes = () => {
     const arrayIndex = Math.floor(Math.random() * rows)
     const colIndex = Math.floor(Math.random() * cols)
@@ -344,6 +350,26 @@ const movingHazard = computed(() => {
         if (movingHazard) { return movingHazard}
     }
 })
+
+const resetPlayer = () => {
+    const currRow = occupiedCell.value.row
+    const currCol = occupiedCell.value.col
+
+    const oldCell = grid.value[currRow][currCol]
+    oldCell.isOccupied = false
+
+    // reset all path cells
+    for (let i = 0; i < grid.value.length; i++) {
+        for (let j = 0; j < grid.value[i].length; j++) {
+            grid.value[i][j].isPath = false
+        }
+    }
+
+    grid.value[0][0].isOccupied = true
+    pathCount = 0
+
+    restartMovingHazard()
+}
 
 const newLevel = () => {
     grid.value = []
