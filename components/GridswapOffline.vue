@@ -1,9 +1,6 @@
 <template>
-    <div class="flex flex-row justify-center pt-24 text-2xl">
+    <div class="flex flex-row justify-center pt-24 text-4xl">
         Level {{ levelCount }}
-    </div>
-    <div class="flex flex-row justify-center pt-24 text-2xl">
-        <button @click="resetPlayer()" class="button-md">Reset Level</button>
     </div>
     <div class="flex flex-col justify-center h-screen items-center">
         <div
@@ -19,6 +16,9 @@
 
             </div>
         </div>
+        <div class="flex flex-row justify-center pt-24 text-2xl">
+            <button @click="resetPlayer()" class="button-md">Reset Level</button>
+        </div>
     </div>
 </template>
 
@@ -30,7 +30,7 @@ let rows = 8;
 let cols = 8;
 let movingHazardRow = 4
 let movingHazardCol = 1
-let movingHazardDirection = "up"
+let movingHazardDirection
 let hazardsToCreate = 1
 let levelCount = 1
 let numberOfHazards = 0
@@ -66,6 +66,12 @@ const createHazards = () => {
 }
 
 const createMovingHazard = () => {
+    // randomly choose row
+    // randomly choose direction
+    const directions = ["up", "down", "left", "right"]
+    const randomInt = Math.floor(Math.random() * directions.length)
+    movingHazardDirection = directions[randomInt]
+
     const row = 1
     const col = 1
     grid.value[row][col].isMovingHazard = true
@@ -159,6 +165,13 @@ const changeMovingHazardDirection = () => {
     if (movingHazardDirection === "down" ) {
         return movingHazardDirection = "up"
     }
+    if ( movingHazardDirection === "left" ) {
+        return movingHazardDirection = "right"
+    }
+    if (movingHazardDirection === "right" ) {
+        return movingHazardDirection = "left"
+    }
+
 }
 
 const moveHazard = (newCellData) => {
@@ -179,8 +192,10 @@ const moveHazard = (newCellData) => {
 
 const restartMovingHazard = () => {
     firstMovingHazardCheck = true
-    hazardIsMoving = true
-    if (!hazardIsMoving) { setTimeout(movingHazardManager, 1000) }
+    if (!hazardIsMoving) {
+        hazardIsMoving = true
+        setTimeout(movingHazardManager, 1000)
+    }
 }
 
 const generateRandomIndexes = () => {
