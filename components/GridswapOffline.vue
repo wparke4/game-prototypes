@@ -2,6 +2,9 @@
     <div class="flex flex-row justify-center pt-24 text-2xl">
         Level {{ levelCount }}
     </div>
+    <div class="flex flex-row justify-center pt-24 text-2xl">
+        <button @click="resetPlayer()" class="button-md">Reset Player</button>
+    </div>
     <div class="flex flex-col justify-center h-screen items-center">
         <div
             v-for="(row, rowIndex) in grid"
@@ -10,7 +13,7 @@
             <div
                 v-for="(cell, colIndex) in row"
                 class="flex w-12 h-12 border-gray-500 border rounded-md"
-                :class="{ 'bg-gray-700': cell.isHazard, 'bg-green-500': cell.isOccupied, 'bg-green-300': cell.isPath }"
+                :class="{ 'bg-gray-700': cell.isHazard, 'bg-green-500': cell.isOccupied, 'bg-green-300': cell.isPath, 'bg-red-800': cell.isMovingHazard }"
                 :key="'cell-' + rowIndex + '-' + colIndex"
             >
 
@@ -25,17 +28,22 @@ let grid = ref([])
 
 let rows = 8;
 let cols = 8;
+let movingHazardRow = 4
+let movingHazardCol = 1
+let movingHazardDirection = "up"
 let hazardsToCreate = 1
 let levelCount = 1
 let numberOfHazards = 0
 let pathCount = 0
+let hazardIsMoving = true
+let firstMovingHazardCheck = true
 
 const createGrid = () => {
     for (let i = 0; i < rows; i++) {
         let currRow = []
         //create array of cols for this row
         for (let j = 0; j < cols; j++) {
-            currRow.push({row: i, col: j, isHazard: false, isOccupied: false, isPath: false})
+            currRow.push({row: i, col: j, isHazard: false, isOccupied: false, isPath: false, isMovingHazard: false})
         }
         grid.value.push(currRow)
     }
@@ -57,6 +65,118 @@ const createHazards = () => {
     }
 }
 
+const createMovingHazard = () => {
+    const row = 1
+    const col = 1
+    grid.value[row][col].isMovingHazard = true
+
+    setTimeout(movingHazardManager, 1000)
+}
+
+const movingHazardManager = () => {
+
+    if (!hazardIsMoving) { return }
+
+    const newCell = determineNextHazardCell()
+
+    if ((newCell.row || newCell.col) < 0 || newCell.row > rows - 1 || newCell.col > cols - 1) {
+        firstMovingHazardCheck = false
+        changeMovingHazardDirection()
+        movingHazardManager()
+    }
+
+    // check if able to move to new cell
+    const cellMoveable = checkHazardMove(newCell)
+
+    if (cellMoveable === "death") {
+        // call function that triggers death and resets the level
+        return
+    } else
+    if (cellMoveable) {
+        moveHazard(newCell)
+    } else
+    if (!cellMoveable && !firstMovingHazardCheck) {
+        hazardIsMoving = false
+        return
+    } else
+    if (!cellMoveable) {
+        firstMovingHazardCheck = false
+        changeMovingHazardDirection()
+        return movingHazardManager()
+    }
+}
+
+const determineNextHazardCell = () => {
+    const currRow = movingHazard.value.row
+    const currCol = movingHazard.value.col
+
+    let newRow
+    let newCol
+
+    // find next cell in the direction of movement
+    if ( movingHazardDirection === "up" ) {
+        newRow = currRow - 1
+        newCol = currCol
+    } else
+    if ( movingHazardDirection === "down" ) {
+        newRow = currRow + 1
+        newCol = currCol
+    } else
+    if ( movingHazardDirection === "left" ) {
+        newRow = currRow
+        newCol = currCol - 1
+    } else
+    if ( movingHazardDirection === "right" ) {
+        newRow = currRow
+        newCol = currCol + 1
+    }
+
+    if ( newRow < 0 || newCol < 0 ) {
+        changeMovingHazardDirection()
+        return determineNextHazardCell()
+    }
+
+    return { row: newRow, col: newCol }
+}
+
+const checkHazardMove = (cellData) => {
+    const cell = grid.value[cellData.row][cellData.col]
+
+    if ( cell.isOccupied ) {
+        return "death"
+    } else
+    if ( cell.isPath || cell.isHazard || !cell) {
+        return false
+    } else {
+        return true
+    }
+}
+
+const changeMovingHazardDirection = () => {
+    if ( movingHazardDirection === "up" ) {
+        return movingHazardDirection = "down"
+    }
+    if (movingHazardDirection === "down" ) {
+        return movingHazardDirection = "up"
+    }
+}
+
+const moveHazard = (newCellData) => {
+    const currRow = movingHazard.value.row
+    const currCol = movingHazard.value.col
+
+    const oldCell = grid.value[currRow][currCol]
+    oldCell.isMovingHazard = false
+
+    const newCell = grid.value[newCellData.row][newCellData.col]
+
+    newCell.isMovingHazard = true
+
+    firstMovingHazardCheck = true
+
+    setTimeout(movingHazardManager, 1000)
+}
+
 const generateRandomIndexes = () => {
     const arrayIndex = Math.floor(Math.random() * rows)
     const colIndex = Math.floor(Math.random() * cols)
@@ -69,8 +189,7 @@ const checkImproperPlacement = (indexes) => {
     const col = indexes.colIndex
 
     // check if located in starting position
-    if ( row === 0 && col === 0 ) {
-        console.log("cannot place hazard in cell 0")
+    if ( (row === 0 && col === 0) || (row === 1 && col === 1)) {
         return true
     }
 }
@@ -82,7 +201,6 @@ const checkExistingHazard = (indexes) => {
     const cellToCheck = grid.value[row][col]
 
     if ( cellToCheck.isHazard === true) {
-        console.log("hazard already exists here")
         return true
     } else {
         return false
@@ -130,7 +248,6 @@ const handleMove = (rowDelta, colDelta) => {
 
     const cellToCheck = findNewCell(cellToCheckData)
     if (!cellToCheck) {
-        console.log("no cell in that direction")
         return
     }
 
@@ -207,7 +324,7 @@ const updateOccupiedCell = (newCell) => {
 
 const checkLevelComplete = () => {
     const gridSize = rows * cols
-    const holesToFill = gridSize - numberOfHazards
+    const holesToFill = gridSize - (numberOfHazards + 1)
     if (pathCount === holesToFill - 1) {
         console.log("level complete")
         setTimeout(newLevel, 1000);
@@ -221,6 +338,13 @@ const occupiedCell = computed(() => {
     }
 })
 
+const movingHazard = computed(() => {
+    for (let i = 0; i < grid.value.length; i++) {
+        const movingHazard = grid.value[i].find(element => element.isMovingHazard)
+        if (movingHazard) { return movingHazard}
+    }
+})
+
 const newLevel = () => {
     grid.value = []
     rows++
@@ -231,6 +355,9 @@ const newLevel = () => {
     pathCount = 0
     levelCount++
     createHazards()
+    createMovingHazard()
+    firstMovingHazardCheck = true
+    hazardIsMoving = true
     createPlayer()
 }
 
@@ -239,6 +366,7 @@ onMounted(() => {
    window.addEventListener('keydown', handleKeydown)
    createGrid()
    createHazards()
+   createMovingHazard()
    createPlayer()
 })
 
