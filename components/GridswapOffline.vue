@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-row justify-center pt-24 text-4xl">
+    <div class="flex flex-row justify-center pt-16 text-4xl">
         Level {{ levelCount }}
     </div>
     <div class="flex flex-col justify-center h-screen items-center">
@@ -9,7 +9,7 @@
         >
             <div
                 v-for="(cell, colIndex) in row"
-                class="flex w-12 h-12 border-gray-500 border rounded-md"
+                class="flex w-10 h-10 border-gray-500 border rounded-md"
                 :class="{ 'bg-gray-700': cell.isHazard, 'bg-green-500': cell.isOccupied, 'bg-green-300': cell.isPath, 'bg-red-800': cell.isMovingHazard }"
                 :key="'cell-' + rowIndex + '-' + colIndex"
             >
@@ -27,6 +27,8 @@
 
 <script setup>
 
+import seedrandom from "seedrandom";
+
 let grid = ref([])
 
 let rows = 8;
@@ -34,12 +36,21 @@ let cols = 8;
 let movingHazardRow = 4
 let movingHazardCol = 1
 let movingHazardDirection
+let movingHazardsToCreate = 0
 let hazardsToCreate = 1
 let levelCount = 1
 let numberOfHazards = 0
 let pathCount = 0
 let hazardIsMoving = true
 let firstMovingHazardCheck = true
+let seed = 6
+let rngRow = seedrandom(seed);
+let rngCol = seedrandom(seed + 1);
+const directions = ["up", "down", "left", "right"]
+let hazardIndexes = []
+const singleHoleSeeds = [1, 3, 5, 6, 7, 8, 9]
+const doubleHoleSeeds = [10, 11, 12, 13, 14, 15, 16, 17, 18]
+const tripleHoleSeeds = [19, 20, 21, 22, 23, 24, 25, 26, 27]
 
 const createGrid = () => {
     for (let i = 0; i < rows; i++) {
@@ -52,6 +63,7 @@ const createGrid = () => {
     }
 }
 
+/*
 const createHazards = () => {
     while (numberOfHazards < hazardsToCreate) {
         const indexes = generateRandomIndexes()
@@ -67,19 +79,54 @@ const createHazards = () => {
         }
     }
 }
+*/
+
+const createHazards = () => {
+    for (let i = 0; i < hazardsToCreate; i++) {
+        const indexes = hazardIndexes[i]
+        placeHazard(indexes)
+    }
+}
+
+const seedManager = () => {
+    console.log('seed is: ' + seed)
+    for (let i = 0; i < hazardsToCreate; i++) {
+        seedGenerateNumbers()
+    }
+
+}
+
+const seedGenerateNumbers = () => {
+    const row = Math.floor(rngRow() * rows)
+    const col = Math.floor(rngCol() * cols)
+    console.log("row: " + row + " col: " + col)
+    hazardIndexes.push({ row: row, col: col })
+}
 
 const createMovingHazard = () => {
-    // randomly choose row
-    // randomly choose direction
-    const directions = ["up", "down", "left", "right"]
+    for (let i = 0; i < movingHazardsToCreate; i++) {
+        setRandomMoveDirection()
+        placeMovingHazard()
+        setTimeout(movingHazardManager, 700)
+    }
+}
+
+const setRandomMoveDirection = () => {
     const randomInt = Math.floor(Math.random() * directions.length)
     movingHazardDirection = directions[randomInt]
+}
 
-    const row = 1
-    const col = 1
-    grid.value[row][col].isMovingHazard = true
-
-    setTimeout(movingHazardManager, 1000)
+const placeMovingHazard = () => {
+    const row = Math.floor(Math.random() * rows)
+    const col = Math.floor(Math.random() * cols)
+    const cell = grid.value[row][col]
+    if (!cell.isHazard && !cell.isOccupied) {
+        cell.isMovingHazard = true
+    } else {
+        //try again
+        console.log("moving hazard cannot be placed here - cell is occupied")
+        return placeMovingHazard()
+    }
 }
 
 const movingHazardManager = () => {
@@ -140,7 +187,7 @@ const determineNextHazardCell = () => {
         newCol = currCol + 1
     }
 
-    if ( newRow < 0 || newCol < 0 ) {
+    if ( newRow < 0 || newCol < 0 || newRow > rows - 1 || newCol > cols - 1) {
         changeMovingHazardDirection()
         return determineNextHazardCell()
     }
@@ -151,10 +198,8 @@ const determineNextHazardCell = () => {
 const checkHazardMove = (cellData) => {
     const cell = grid.value[cellData.row][cellData.col]
 
-    if ( cell.isOccupied ) {
-        return "death"
-    } else
-    if ( cell.isPath || cell.isHazard || !cell) {
+
+    if ( !cell || cell.isPath || cell.isHazard || cell.isOccupied) {
         return false
     } else {
         return true
@@ -190,14 +235,14 @@ const moveHazard = (newCellData) => {
 
     firstMovingHazardCheck = true
 
-    setTimeout(movingHazardManager, 1000)
+    setTimeout(movingHazardManager, 700)
 }
 
 const restartMovingHazard = () => {
     firstMovingHazardCheck = true
     if (!hazardIsMoving) {
         hazardIsMoving = true
-        setTimeout(movingHazardManager, 1000)
+        setTimeout(movingHazardManager, 700)
     }
 }
 
@@ -232,8 +277,8 @@ const checkExistingHazard = (indexes) => {
 }
 
 const placeHazard = (indexes) => {
-    const row = indexes.arrayIndex
-    const col = indexes.colIndex
+    const row = indexes.row
+    const col = indexes.col
     grid.value[row][col].isHazard = true
     numberOfHazards++
 }
@@ -328,7 +373,7 @@ const pathCheck = (cellToCheck) => {
 }
 
 const hazardCheck = (cellToCheck) => {
-    if (cellToCheck.isHazard === true) {
+    if ((cellToCheck.isHazard || cellToCheck.isMovingHazard) === true) {
         // call function that fails level and resets
         return true
     } else if (cellToCheck.isHazard === false) {
@@ -351,10 +396,10 @@ const updateOccupiedCell = (newCell) => {
 
 const checkLevelComplete = () => {
     const gridSize = rows * cols
-    const holesToFill = gridSize - (numberOfHazards + 1)
+    const holesToFill = gridSize - (numberOfHazards)
     if (pathCount === holesToFill - 1) {
         console.log("level complete")
-        setTimeout(newLevel, 1000);
+        setTimeout(newLevel, 700);
     }
 }
 
@@ -398,6 +443,7 @@ const newLevel = () => {
     cols++
     createGrid()
     hazardsToCreate++
+    seedManager()
     numberOfHazards = 0
     pathCount = 0
     levelCount++
@@ -412,9 +458,10 @@ const newLevel = () => {
 onMounted(() => {
    window.addEventListener('keydown', handleKeydown)
    createGrid()
+   seedManager()
    createHazards()
-   createMovingHazard()
    createPlayer()
+   createMovingHazard()
 })
 
 onUnmounted(() => {
