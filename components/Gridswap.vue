@@ -239,6 +239,7 @@ const findGame = async () => {
 
 
 const handleUpdates = (payload) => {
+    console.log("handleUpdates", payload)
     if (payload.new.id !== game.value?.id) {
         return
     }
@@ -247,6 +248,7 @@ const handleUpdates = (payload) => {
     }
     if (payload.new.gameStatus) {
         game.value.gameStatus = payload.new.gameStatus
+        console.log("gameStatus changed to", payload.new.gameStatus)
     }
     if (payload.new.players) {
         game.value.players = payload.new.players

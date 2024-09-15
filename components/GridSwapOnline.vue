@@ -36,7 +36,7 @@ let cols = 8;
 let movingHazardRow = 4
 let movingHazardCol = 1
 let movingHazardDirection
-let movingHazardsToCreate = 1
+let movingHazardsToCreate = 0
 let hazardsToCreate = 1
 let levelCount = 1
 let numberOfHazards = 0
@@ -102,12 +102,6 @@ const seedGenerateNumbers = () => {
     const col = Math.floor(rngCol() * cols)
     console.log("row: " + row + " col: " + col)
     hazardIndexes.push({ row: row, col: col })
-}
-
-const checkMovingHazardNumber = () => {
-    if (levelCount % 2 === 0) {
-        movingHazardsToCreate++
-    }
 }
 
 const createMovingHazard = () => {
@@ -403,7 +397,7 @@ const updateOccupiedCell = (newCell) => {
 
 const checkLevelComplete = () => {
     const gridSize = rows * cols
-    const holesToFill = gridSize - (numberOfHazards + movingHazardsToCreate)
+    const holesToFill = gridSize - (numberOfHazards)
     if (pathCount === holesToFill - 1) {
         console.log("level complete")
         setTimeout(newLevel, 700);
@@ -448,15 +442,13 @@ const newLevel = () => {
     grid.value = []
     rows++
     cols++
-    levelCount++
     createGrid()
     hazardsToCreate++
     seedManager()
     numberOfHazards = 0
     pathCount = 0
-    //levelCount++
+    levelCount++
     createHazards()
-    checkMovingHazardNumber()
     createMovingHazard()
     firstMovingHazardCheck = true
     hazardIsMoving = true
