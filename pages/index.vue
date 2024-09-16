@@ -23,5 +23,6 @@ const links = [
     { to: '/blindMaze', name: 'Blind Maze'},
     { to: '/gridswap', name: 'Grid Swap'},
     { to: '/gridswapOffline', name: 'Grid Swap Offline'},
+    { to: '/poker2card', name: 'Poker 2 Card'},
 ]
 </script>
