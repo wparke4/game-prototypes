@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-screen bg-gradient-to-b from-gray-900 to-slate-800 flex flex-col">
       <!-- Main content -->
-      <div class="flex-grow flex flex-col justify-center p-6">
+      <div class="flex-grow flex flex-col justify-center p-6 relative">
         <!-- Cards container -->
         <div v-if="gameStarted" class="flex justify-center mb-8">
           <div class="w-1/2 pr-2">
@@ -22,10 +22,20 @@
             </div>
           </div>
         </div>
-        <div v-if="displayResults" class=" bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-6 rounded-lg shadow-lg w-80">
-                <h2 class="text-xl font-bold mb-4">Game Over</h2>
-                <p class="mb-4">these are results}</p>
+        <!-- Results overlay -->
+        <div v-if="displayResults" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-4/5 h-1/4 flex items-center justify-center bg-black bg-opacity-50">
+            <div :class="[
+                'p-6 rounded-lg w-80 text-center',
+                result.includes('You win') ? 'bg-green-500 shadow-sm shadow-green-300' :
+                result.includes('Dealer wins') ? 'bg-red-500 shadow-sm shadow-red-300' :
+                result.includes('You folded') ? 'bg-red-500 shadow-sm shadow-red-300' : 'bg-gray-300 shadow-sm'
+            ]">
+                <p class="mb-4 text-xl font-bold text-white">{{ result }}</p>
+                <p v-if="result.includes('Dealer wins')" class="mb-2 text-white"> Amount Lost: {{ betAmount }}</p>
+                <p v-if="result.includes('You folded')" class="mb-2 text-white"> Amount Lost: {{ betAmount }}</p>
+                <p v-if="result.includes('You win')" class="mb-2 text-white"> Total Bet: {{ betAmount }}</p>
+                <p v-if="result.includes('You win')" class="mb-2 text-white"> Winnings: {{ winnings }}</p>
+
             </div>
         </div>
       </div>
@@ -133,6 +143,7 @@ export default {
       this.result = 'You folded. You lose your bet.'
       this.hideDealersCards = false
       this.waitingToStart = true
+      this.displayResults = true
       // this.winnings = -this.betAmount
     },
     doubleBet() {
@@ -220,7 +231,7 @@ export default {
       this.result = ''
       this.winnings = 0
       this.betAmount = 1
-    }
+      }
   }
 }
 
@@ -241,3 +252,7 @@ onUnmounted(() => {
 })
 */
 </script>
+
+<style scoped>
+/* Remove the previous styles */
+</style>
