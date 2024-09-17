@@ -1,55 +1,76 @@
 <template>
-    <div class="max-w-2xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
-    <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">2 Card Poker</h1>
-    <div v-if="!gameStarted" class="space-y-4">
-      <div class="flex items-center space-x-2">
-        <label class="text-gray-700 font-medium">
-          Bet Amount:
-          <input v-model.number="betAmount" type="number" min="1" class="ml-2 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </label>
-      </div>
-      <button @click="startGame" :disabled="!betAmount" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed">
-        Start Game
-      </button>
-    </div>
-    <div v-else class="space-y-6">
-      <div class="flex justify-between">
-        <div class="w-1/2 pr-2">
-          <h2 class="text-xl font-semibold mb-2 text-gray-700">Your Hand</h2>
-          <div v-for="card in playerHand" :key="card.id" class="bg-white p-2 mb-2 rounded shadow">
-            {{ card.rank }} of {{ card.suit }}
-          </div>
-        </div>
-        <div class="w-1/2 pl-2">
-          <h2 class="text-xl font-semibold mb-2 text-gray-700">Dealer's Hand</h2>
-          <div v-if="gameEnded">
-            <div v-for="card in dealerHand" :key="card.id" class="bg-white p-2 mb-2 rounded shadow">
+    <div class="min-h-screen bg-gradient-to-b from-gray-900 to-slate-800 flex flex-col">
+      <!-- Main content -->
+      <div class="flex-grow flex flex-col justify-center p-6">
+        <!-- Cards container -->
+        <div v-if="gameStarted" class="flex justify-center mb-8">
+          <div class="w-1/2 pr-2">
+            <h2 class="text-xl font-semibold mb-2 text-white">Your Hand</h2>
+            <div v-for="card in playerHand" :key="card.id" class="bg-white p-2 mb-2 rounded shadow">
               {{ card.rank }} of {{ card.suit }}
             </div>
           </div>
-          <div v-else class="bg-gray-300 p-2 rounded shadow text-center">
-            [Hidden]
+          <div class="w-1/2 pl-2">
+            <h2 class="text-xl font-semibold mb-2 text-white">Dealer's Hand</h2>
+            <div v-if="!hideDealersCards">
+              <div v-for="card in dealerHand" :key="card.id" class="bg-white p-2 mb-2 rounded shadow">
+                {{ card.rank }} of {{ card.suit }}
+              </div>
+            </div>
+            <div v-else class="bg-gray-300 p-2 rounded shadow text-center">
+              [Hidden]
+            </div>
           </div>
         </div>
+        <div v-if="displayResults" class=" bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded-lg shadow-lg w-80">
+                <h2 class="text-xl font-bold mb-4">Game Over</h2>
+                <p class="mb-4">these are results}</p>
+            </div>
+        </div>
       </div>
-      <div v-if="!gameEnded" class="flex justify-center space-x-4">
-        <button @click="fold" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
-          Fold
-        </button>
-        <button @click="doubleBet" class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
-          Double Bet
-        </button>
-      </div>
-      <div v-else class="text-center space-y-4">
-        <h2 class="text-2xl font-bold text-gray-800">{{ result }}</h2>
-        <p class="text-xl text-gray-700">Your winnings: {{ winnings }}</p>
-        <button @click="resetGame" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-          Play Again
-        </button>
+
+      <!-- Bottom section -->
+      <div class="p-14">
+        <!-- Wallet and bet container -->
+        <div class="flex justify-center space-x-6 mb-10">
+          <div class="mr-8">
+            <p class="text-white">Wallet</p>
+            <p class="text-white">{{ wallet }}</p>
+          </div>
+          <div v-if="!waitingToStart" class="text-white">
+            <p>Bet</p>
+            <p>{{ betAmount }}</p>
+          </div>
+          <div v-if="!gameStarted" class="flex items-center">
+                <input
+                    v-model.number="betAmount"
+                    type="range"
+                    :min="1"
+                    :max="wallet"
+                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                />
+            </div>
+        </div>
+
+        <!-- Game buttons -->
+        <div class="flex justify-center">
+            <div v-if="waitingToStart">
+                <button @click="resetGame" class="bg-blue-500 text-white px-8 py-4 drop-shadow-lg rounded-lg">Play Again</button>
+            </div>
+            <div v-else>
+                <div v-if="!gameStarted">
+                    <button @click="startGame" class="bg-blue-500 text-white px-8 py-4 rounded-lg drop-shadow-lg">Place Bet</button>
+                </div>
+                <div v-else class="space-x-4">
+                    <button @click="fold" class="bg-red-500 text-white px-6 py-4 rounded-lg drop-shadow-lg">Fold</button>
+                    <button @click="doubleBet" class="bg-green-500 text-white px-6 py-4 rounded-lg drop-shadow-lg">Double Down</button>
+                </div>
+            </div>
+        </div>
       </div>
     </div>
-  </div>
-</template>
+  </template>
 
 <script>
 export default {
@@ -57,19 +78,28 @@ export default {
     return {
       betAmount: 0,
       gameStarted: false,
-      gameEnded: false,
+      //gameEnded: false,
+      hideDealersCards: true,
+      waitingToStart: false,
+      displayResults: false,
       playerHand: [],
       dealerHand: [],
       deck: [],
       result: '',
-      winnings: 0
+      winnings: 0,
+      wallet: 1000
     }
   },
   methods: {
     startGame() {
       this.gameStarted = true
+      this.wallet -= this.betAmount
       this.initializeDeck()
       this.dealCards()
+    },
+    startNewRound() {
+      this.waitingToStart = false
+      this.gameStarted = false
     },
     initializeDeck() {
       const suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs']
@@ -94,12 +124,16 @@ export default {
       this.dealerHand = [this.deck.pop(), this.deck.pop()]
     },
     fold() {
-      this.gameEnded = true
+      //this.gameEnded = true
       this.result = 'You folded. You lose your bet.'
-      this.winnings = -this.betAmount
+      // this.winnings = -this.betAmount
     },
     doubleBet() {
-      this.gameEnded = true
+      this.hideDealersCards = false
+      this.waitingToStart = true
+      //this.gameEnded = true
+      this.wallet -= this.betAmount
+      this.betAmount *= 2
       this.evaluateHands()
     },
     evaluateHands() {
@@ -112,19 +146,20 @@ export default {
         if (playerHand.type === 'pair' && dealerHand.type !== 'pair') {
             this.result = 'You win!'
             this.winnings = this.betAmount * 2
+            this.wallet += this.winnings
         } else if (dealerHand.type === 'pair' && playerHand.type !== 'pair') {
             this.result = 'Dealer wins. You lose your bet.'
-            this.winnings = -this.betAmount * 2
         // If both have pairs, compare the values
         } else if (playerHand.type === 'pair' && dealerHand.type === 'pair') {
             if (playerHand.pairValue > dealerHand.pairValue) {
             this.result = 'You win!'
             this.winnings = this.betAmount * 2
+            this.wallet += this.winnings
             } else if (playerHand.pairValue < dealerHand.pairValue) {
             this.result = 'Dealer wins. You lose your bet.'
-            this.winnings = -this.betAmount * 2
             } else {
             this.result = "It's a tie. Your bet is returned."
+            this.wallet += this.betAmount
             this.winnings = 0
             }
         // No pairs, evaluate high card
@@ -132,21 +167,23 @@ export default {
             if (playerHand.highCard > dealerHand.highCard) {
             this.result = 'You win!'
             this.winnings = this.betAmount * 2
+            this.wallet += this.winnings
             } else if (playerHand.highCard < dealerHand.highCard) {
             this.result = 'Dealer wins. You lose your bet.'
-            this.winnings = -this.betAmount * 2
             // Equal high cards, evaluate low card
             } else if (playerHand.lowCard > dealerHand.lowCard) {
             this.result = 'You win!'
             this.winnings = this.betAmount * 2
+            this.wallet += this.winnings
             } else if (playerHand.lowCard < dealerHand.lowCard) {
             this.result = 'Dealer wins. You lose your bet.'
-            this.winnings = -this.betAmount * 2
             } else {
             this.result = "It's a tie. Your bet is returned."
+            this.wallet += this.betAmount
             this.winnings = 0
             }
         }
+        this.displayResults = true
     },
     evaluateHand(hand) {
         const values = hand.map(card => card.value).sort((a, b) => b - a)
@@ -166,8 +203,11 @@ export default {
         }
     },
     resetGame() {
+      this.waitingToStart = false
       this.gameStarted = false
-      this.gameEnded = false
+      this.hideDealersCards = true
+      this.displayResults = false
+      //this.gameEnded = false
       this.playerHand = []
       this.dealerHand = []
       this.result = ''
