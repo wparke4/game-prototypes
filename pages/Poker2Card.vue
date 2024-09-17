@@ -1,7 +1,5 @@
 <template>
-    <div class="min-h-screen bg-orange-100 py-6 flex flex-col items-center justify-center sm:py-12">
-        <Poker2Card />
-    </div>
+    <Poker2Card />
 </template>
 
 <script setup>
