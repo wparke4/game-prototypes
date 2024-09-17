@@ -47,7 +47,7 @@
                     v-model.number="betAmount"
                     type="range"
                     :min="1"
-                    :max="wallet"
+                    :max="maxBet"
                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                 />
             </div>
@@ -76,7 +76,7 @@
 export default {
   data() {
     return {
-      betAmount: 0,
+      betAmount: 1,
       gameStarted: false,
       //gameEnded: false,
       hideDealersCards: true,
@@ -88,6 +88,11 @@ export default {
       result: '',
       winnings: 0,
       wallet: 1000
+    }
+  },
+  computed: {
+    maxBet() {
+      return Math.floor(this.wallet / 2)
     }
   },
   methods: {
@@ -126,6 +131,8 @@ export default {
     fold() {
       //this.gameEnded = true
       this.result = 'You folded. You lose your bet.'
+      this.hideDealersCards = false
+      this.waitingToStart = true
       // this.winnings = -this.betAmount
     },
     doubleBet() {
@@ -212,7 +219,7 @@ export default {
       this.dealerHand = []
       this.result = ''
       this.winnings = 0
-      this.betAmount = 0
+      this.betAmount = 1
     }
   }
 }
