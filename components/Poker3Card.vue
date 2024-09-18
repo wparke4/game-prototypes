@@ -1,16 +1,16 @@
 <template>
   <div class="min-h-screen bg-gradient-to-b from-gray-900 to-slate-800 flex flex-col">
     <!-- Dealer's hand -->
-    <div class="mt-8 px-4">
-      <h2 class="text-xl font-semibold mb-2 text-white">Dealer's Hand</h2>
+    <div class="mt-4 px-4">
+      <h2 class="text-l font-semibold mb-2 text-white">Dealer's Hand</h2>
       <div class="flex justify-center space-x-2">
-        <div v-if="!hideDealersCards">
-          <div v-for="card in dealerHand" :key="card.id" class="bg-white p-2 rounded shadow inline-block">
-            {{ card.rank }} of {{ card.suit }}
+        <div v-if="!hideDealersCards" class="flex space-x-2">
+          <div v-for="card in dealerHand" :key="card.id" class="inline-block">
+            <img :src="`/cardsFront/${card.suit.toLowerCase()}_${card.rank}.svg`" alt="Card" class="w-18 h-auto">
           </div>
         </div>
-        <div v-else class="bg-gray-300 p-2 rounded shadow text-center w-20">
-          [Hidden]
+        <div v-else class="flex space-x-2">
+          <img v-for="i in 3" :key="i" src="/cardBacks/abstract_clouds.svg" alt="Hidden card" class="w-18 h-auto">
         </div>
       </div>
     </div>
@@ -20,10 +20,15 @@
 
     <!-- Player's hand -->
     <div class="px-4">
-      <h2 class="text-xl font-semibold mb-2 text-white">Your Hand</h2>
+      <h2 class="text-l font-semibold mb-2 text-white">Your Hand</h2>
       <div class="flex justify-center space-x-2">
-        <div v-for="card in playerHand" :key="card.id" class="bg-white p-2 rounded shadow inline-block">
-          {{ card.rank }} of {{ card.suit }}
+        <div v-if="gameStarted" class="flex space-x-2">
+          <div v-for="card in playerHand" :key="card.id" class="inline-block">
+            <img :src="`/cardsFront/${card.suit.toLowerCase()}_${card.rank}.svg`" alt="Card" class="w-18 h-auto">
+          </div>
+        </div>
+        <div v-else class="flex space-x-2">
+          <img v-for="i in 3" :key="i" src="/cardBacks/abstract_clouds.svg" alt="Hidden card" class="w-18 h-auto">
         </div>
       </div>
     </div>
@@ -38,7 +43,7 @@
           result.includes('Dealer wins') ? 'bg-red-500 shadow-sm shadow-red-300' :
           result.includes('You folded') ? 'bg-red-500 shadow-sm shadow-red-300' : 'bg-gray-500 shadow-sm'
         ]">
-          <p class="mb-1 text-xl font-bold text-white">{{ result }}</p>
+          <p class="mb-1 text-lg font-bold text-white">{{ result }}</p>
           <p v-if="result.includes('Dealer wins')" class="mb-1 text-white"> Amount Lost: {{ betAmount }}</p>
           <p v-if="result.includes('You folded')" class="mb-1 text-white"> Amount Lost: {{ betAmount }}</p>
           <p v-if="result.includes('You win')" class="mb-1 text-white"> Amount Won: {{ winnings }}</p>
@@ -128,7 +133,7 @@ export default {
     initializeDeck() {
       const suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs']
       //const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-      const ranks = ['7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+      const ranks = ['7', '8', '9', '10', 'jack', 'queen', 'king', 'ace']
       const values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
       this.deck = []
       for (let suit of suits) {
