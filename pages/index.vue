@@ -24,5 +24,7 @@ const links = [
     { to: '/gridswap', name: 'Grid Swap'},
     { to: '/gridswapOffline', name: 'Grid Swap Offline'},
     { to: '/poker2card', name: 'Poker 2 Card'},
+    { to: '/poker2cardSB', name: 'Poker 2 Card SB'},
+    { to: '/poker3card', name: 'Poker 3 Card'},
 ]
 </script>
