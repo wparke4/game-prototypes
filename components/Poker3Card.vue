@@ -2,7 +2,9 @@
   <div class="min-h-screen bg-gradient-to-b from-gray-900 to-slate-800 flex flex-col">
     <!-- Dealer's hand -->
     <div class="mt-4 px-4">
-      <h2 class="text-l font-semibold mb-2 text-white">Dealer's Hand</h2>
+      <h2 class="text-l font-semibold mb-2 text-white">
+        Dealer's Hand {{ dealerHandDisplay ? `(${dealerHandDisplay})` : '' }}
+      </h2>
       <div class="flex justify-center space-x-2">
         <div v-if="!hideDealersCards" class="flex space-x-2">
           <div v-for="card in dealerHand" :key="card.id" class="inline-block">
@@ -20,7 +22,9 @@
 
     <!-- Player's hand -->
     <div class="px-4">
-      <h2 class="text-l font-semibold mb-2 text-white">Your Hand</h2>
+      <h2 class="text-l font-semibold mb-2 text-white">
+        Your Hand {{ playerHandDisplay ? `(${playerHandDisplay})` : '' }}
+      </h2>
       <div class="flex justify-center space-x-2">
         <div v-if="gameStarted" class="flex space-x-2">
           <div v-for="card in playerHand" :key="card.id" class="inline-block">
@@ -117,6 +121,16 @@ export default {
     maxBet() {
       return Math.floor(this.wallet / 2)
     },
+    playerHandDisplay() {
+      if (!this.gameStarted || this.playerHand.length === 0) return null;
+      const handEvaluation = this.evaluateHand(this.playerHand);
+      return handEvaluation.type;
+    },
+    dealerHandDisplay() {
+      if (this.hideDealersCards || this.dealerHand.length === 0) return null;
+      const handEvaluation = this.evaluateHand(this.dealerHand);
+      return handEvaluation.type;
+    }
   },
   methods: {
     startGame() {
