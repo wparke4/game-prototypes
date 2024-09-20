@@ -369,23 +369,31 @@
       },
       isPlayerBestCard(index) {
         if (!this.playerHandEvaluation) return false;
-        if (this.playerHandEvaluation.type === 'Pair') {
-          return index === 0 || index === 1;
+        switch (this.playerHandEvaluation.type) {
+          case 'Pair':
+            return index === 0 || index === 1;
+          case 'Three of a Kind':
+          case 'Straight':
+          case 'Flush':
+          case 'Straight Flush':
+            return true; // All cards glow for these hand types
+          default:
+            return index === 0; // Only the highest card glows for High Card
         }
-        if (['Straight', 'Flush', 'Straight Flush'].includes(this.playerHandEvaluation.type)) {
-          return true; // All cards glow for straights, flushes, and straight flushes
-        }
-        return index === 0;
       },
       isDealerBestCard(index) {
         if (!this.dealerHandEvaluation) return false;
-        if (this.dealerHandEvaluation.type === 'Pair') {
-          return index === 0 || index === 1;
+        switch (this.dealerHandEvaluation.type) {
+          case 'Pair':
+            return index === 0 || index === 1;
+          case 'Three of a Kind':
+          case 'Straight':
+          case 'Flush':
+          case 'Straight Flush':
+            return true; // All cards glow for these hand types
+          default:
+            return index === 0; // Only the highest card glows for High Card
         }
-        if (['Straight', 'Flush', 'Straight Flush'].includes(this.dealerHandEvaluation.type)) {
-          return true; // All cards glow for straights, flushes, and straight flushes
-        }
-        return index === 0;
       },
       resetGame() {
         this.waitingToStart = false
