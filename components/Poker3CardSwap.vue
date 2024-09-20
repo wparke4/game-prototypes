@@ -28,7 +28,13 @@
         <div class="flex justify-center space-x-2">
           <div v-if="gameStarted" class="flex space-x-2">
             <div v-for="(card, index) in sortedPlayerHand" :key="card.id" class="inline-block">
-              <img :src="`/cardsFront/${card.suit.toLowerCase()}_${card.rank}.svg`" alt="Card" class="w-18 h-auto" :class="{ 'glow': isPlayerBestCard(index) }">
+              <img
+                :src="`/cardsFront/${card.suit.toLowerCase()}_${card.rank}.svg`"
+                alt="Card"
+                class="w-18 h-auto cursor-pointer"
+                :class="{ 'glow': isPlayerBestCard(index), 'selected': selectedCardIndex === index }"
+                @click="selectCard(index)"
+              >
             </div>
           </div>
           <div v-else class="flex space-x-2">
@@ -89,8 +95,15 @@
               <button @click="startGame" class="bg-blue-500 text-white px-8 py-4 rounded-lg drop-shadow-lg md:px-12 md:py-6">Place Bet</button>
             </div>
             <div v-else class="space-x-4">
-              <button @click="fold" class="bg-red-500 text-white px-6 py-4 rounded-lg drop-shadow-lg md:px-10 md:py-6">Fold</button>
-              <button @click="doubleBet" class="bg-green-500 text-white px-6 py-4 rounded-lg drop-shadow-lg md:px-10 md:py-6">Double Down</button>
+              <button @click="check" class="bg-red-500 text-white px-6 py-4 rounded-lg drop-shadow-lg md:px-10 md:py-6">Check</button>
+              <button
+                @click="swapCard"
+                class="bg-green-500 text-white px-6 py-4 rounded-lg drop-shadow-lg md:px-10 md:py-6"
+                :disabled="selectedCardIndex === null"
+                :class="{ 'opacity-50 cursor-not-allowed': selectedCardIndex === null }"
+              >
+                Swap Card
+              </button>
             </div>
           </div>
         </div>
@@ -119,6 +132,7 @@
         sortedDealerHand: [],
         playerHandEvaluation: null,
         dealerHandEvaluation: null,
+        selectedCardIndex: null,
       }
     },
     computed: {
@@ -174,6 +188,46 @@
         this.playerHand = [this.deck.pop(), this.deck.pop(), this.deck.pop()]
         this.dealerHand = [this.deck.pop(), this.deck.pop(), this.deck.pop()]
       },
+      check() {
+        console.log('check')
+        this.evaluateHands()
+        this.hideDealersCards = false
+        this.displayResults = true
+        this.waitingToStart = true
+      },
+      selectCard(index) {
+        if (this.gameStarted && !this.waitingToStart) {
+          this.selectedCardIndex = this.selectedCardIndex === index ? null : index;
+        }
+      },
+      swapCard() {
+        if (this.selectedCardIndex !== null) {
+          console.log('swapCard')
+          const newCard = this.deck.pop()
+
+          // Store the index in the original (unsorted) playerHand
+          const originalIndex = this.playerHand.findIndex(card => card === this.sortedPlayerHand[this.selectedCardIndex])
+
+          // Replace the card in the original playerHand
+          this.playerHand[originalIndex] = newCard
+
+          // Give the dealer an extra card
+          const dealerExtraCard = this.deck.pop()
+          this.dealerHand.push(dealerExtraCard)
+
+          // Re-evaluate and sort the player's hand
+          this.playerHandEvaluation = this.evaluateHand(this.playerHand)
+          this.sortedPlayerHand = this.sortHand(this.playerHand, this.playerHandEvaluation)
+
+          this.selectedCardIndex = null // Reset selection after swap
+
+          // Evaluate dealer's hand and display results
+          this.evaluateHands()
+          this.hideDealersCards = false
+          this.displayResults = true
+          this.waitingToStart = true
+        }
+      },
       fold() {
         //this.gameEnded = true
         this.result = 'You folded. You lose your bet.'
@@ -224,34 +278,65 @@
           this.displayResults = true
       },
       evaluateHand(hand) {
-          const values = hand.map(card => card.value).sort((a, b) => b - a)
-          const suits = hand.map(card => card.suit)
-          const ranks = hand.map(card => card.rank)
+        // If it's a 4-card hand (dealer's hand after swap), find the best 3-card combination
+        if (hand.length === 4) {
+          const combinations = [
+            [0, 1, 2],
+            [0, 1, 3],
+            [0, 2, 3],
+            [1, 2, 3]
+          ];
 
-          const isFlush = suits.every(suit => suit === suits[0])
-          const isStraight = this.checkStraight(values)
+          let bestHand = null;
+          let bestEvaluation = { rank: 0, type: '', highCard: 0 };
 
-          if (isFlush && isStraight) {
-              return { rank: 6, type: 'Straight Flush', highCard: Math.max(...values) }
+          for (const combo of combinations) {
+            const threeCardHand = combo.map(i => hand[i]);
+            const evaluation = this.evaluateThreeCardHand(threeCardHand);
+
+            if (evaluation.rank > bestEvaluation.rank ||
+                (evaluation.rank === bestEvaluation.rank && evaluation.highCard > bestEvaluation.highCard)) {
+              bestHand = threeCardHand;
+              bestEvaluation = evaluation;
+            }
           }
 
-          if (values[0] === values[1] && values[1] === values[2]) {
-              return { rank: 5, type: '3 of a Kind', highCard: values[0] }
-          }
+          return bestEvaluation;
+        }
 
-          if (isStraight) {
-              return { rank: 4, type: 'Straight', highCard: Math.max(...values) }
-          }
+        // For 3-card hands, evaluate directly
+        return this.evaluateThreeCardHand(hand);
+      },
 
-          if (isFlush) {
-              return { rank: 3, type: 'Flush', highCard: Math.max(...values) }
-          }
+      evaluateThreeCardHand(hand) {
+        const values = hand.map(card => card.value).sort((a, b) => b - a);
+        const suits = hand.map(card => card.suit);
+        const ranks = hand.map(card => card.rank);
 
-          if (values[0] === values[1] || values[1] === values[2]) {
-              return { rank: 2, type: 'Pair', highCard: values[0] === values[1] ? values[0] : values[1] }
-          }
+        const isFlush = suits.every(suit => suit === suits[0]);
+        const isStraight = this.checkStraight(values);
 
-          return { rank: 1, type: 'High Card', highCard: Math.max(...values) }
+        if (isFlush && isStraight) {
+          return { rank: 6, type: 'Straight Flush', highCard: Math.max(...values) };
+        }
+
+        if (values[0] === values[1] && values[1] === values[2]) {
+          return { rank: 5, type: '3 of a Kind', highCard: values[0] };
+        }
+
+        if (isStraight) {
+          return { rank: 4, type: 'Straight', highCard: Math.max(...values) };
+        }
+
+        if (isFlush) {
+          return { rank: 3, type: 'Flush', highCard: Math.max(...values) };
+        }
+
+        if (values[0] === values[1] || values[1] === values[2]) {
+          return { rank: 2, type: 'Pair', highCard: values[0] === values[1] ? values[0] : values[1] };
+        }
+
+        return { rank: 1, type: 'High Card', highCard: Math.max(...values) };
       },
       checkStraight(values) {
           const sortedValues = [...values].sort((a, b) => a - b)
@@ -287,8 +372,8 @@
         if (this.playerHandEvaluation.type === 'Pair') {
           return index === 0 || index === 1;
         }
-        if (this.playerHandEvaluation.type === 'Straight' || this.playerHandEvaluation.type === 'Straight Flush') {
-          return true; // All cards glow for straights
+        if (['Straight', 'Flush', 'Straight Flush'].includes(this.playerHandEvaluation.type)) {
+          return true; // All cards glow for straights, flushes, and straight flushes
         }
         return index === 0;
       },
@@ -297,8 +382,8 @@
         if (this.dealerHandEvaluation.type === 'Pair') {
           return index === 0 || index === 1;
         }
-        if (this.dealerHandEvaluation.type === 'Straight' || this.dealerHandEvaluation.type === 'Straight Flush') {
-          return true; // All cards glow for straights
+        if (['Straight', 'Flush', 'Straight Flush'].includes(this.dealerHandEvaluation.type)) {
+          return true; // All cards glow for straights, flushes, and straight flushes
         }
         return index === 0;
       },
@@ -322,6 +407,7 @@
         } else {
           this.betAmount = this.defaultBet
         }
+        this.selectedCardIndex = null
         }
     }
   }
@@ -349,5 +435,9 @@
     box-shadow: 0 0 10px 3px rgba(255, 215, 0, 0.7); /* Golden glow */
     /* border-radius: 0px; /* Adjust based on your card's corner radius */
   }
-  </style>
 
+  .selected {
+    transform: translateY(-10px);
+    transition: transform 0.3s ease;
+  }
+  </style>
