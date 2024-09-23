@@ -18,10 +18,7 @@
 import Header from '@/components/Header.vue'
 
 const links = [
-    { to: '/wordrift', name: 'Wordrift'},
-    { to: '/grogGamesDb', name: 'Grog Games'},
-    { to: '/blindMaze', name: 'Blind Maze'},
-    { to: '/gridswap', name: 'Grid Swap'},
+    { to: '/pushyourdice', name: 'Push Your Dice'},
     { to: '/gridswapOffline', name: 'Grid Swap Offline'},
     { to: '/poker2card', name: 'Poker 2 Card'},
     { to: '/poker2cardSB', name: 'Poker 2 Card SB'},
