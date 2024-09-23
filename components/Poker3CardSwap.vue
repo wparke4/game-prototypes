@@ -137,7 +137,7 @@
     },
     computed: {
       maxBet() {
-        return Math.floor(this.wallet / 2)
+        return Math.floor(this.wallet)
       },
       playerHandDisplay() {
         if (!this.gameStarted || this.playerHand.length === 0) return null;
